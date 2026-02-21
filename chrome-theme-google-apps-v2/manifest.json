@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Custom Wallpaper with Google Apps",
+  "version": "1.0",
+  "description": "Set custom wallpaper and access all Google apps",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

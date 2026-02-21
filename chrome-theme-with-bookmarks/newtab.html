@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Tab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="wallpaper-container"></div>
+    
+    <div class="overlay">
+        <!-- Left Sidebar -->
+        <div class="left-sidebar">
+            <button class="sidebar-tab active" data-category="google">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                </svg>
+                <span>Google</span>
+            </button>
+            <button class="sidebar-tab" data-category="ai">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M13,17h-2v-2h2V17z M13,13h-2V7h2V13z"/>
+                </svg>
+                <span>AI</span>
+            </button>
+            <button class="sidebar-tab" data-category="bookmarks">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z"/>
+                </svg>
+                <span>Bookmarks</span>
+            </button>
+        </div>
+
+        <div class="top-bar">
+            <div class="settings-btn" id="settingsBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="time-display" id="timeDisplay"></div>
+
+        <div class="content-container">
+            <!-- Google Apps (Default Active) -->
+            <div class="app-category google-section active" data-category="google">
+                <div class="search-container">
+                    <input type="text" id="googleSearch" placeholder="🔍 Google এ সার্চ করুন...">
+                </div>
+                <div class="app-grid" id="googleApps"></div>
+            </div>
+
+            <!-- AI Apps -->
+            <div class="app-category ai-section" data-category="ai">
+                <div class="search-container">
+                    <input type="text" id="aiSearch" placeholder="🤖 AI Tools খুঁজুন...">
+                </div>
+                <div class="app-grid" id="aiApps"></div>
+            </div>
+
+            <!-- Bookmarks -->
+            <div class="app-category bookmarks-section" data-category="bookmarks">
+                <div class="bookmarks-header">
+                    <h2>📑 My Bookmarks</h2>
+                    <button id="addBookmarkBtn" class="add-bookmark-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                            <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+                        </svg>
+                        Add Bookmark
+                    </button>
+                </div>
+                <div class="bookmarks-grid" id="bookmarksGrid"></div>
+                <div class="empty-bookmarks" id="emptyBookmarks">
+                    <svg width="100" height="100" viewBox="0 0 24 24" fill="rgba(255,255,255,0.3)">
+                        <path d="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z"/>
+                    </svg>
+                    <p>No bookmarks yet</p>
+                    <p style="font-size: 14px; opacity: 0.7;">Click "Add Bookmark" to save your favorite sites</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bookmark Modal -->
+    <div id="addBookmarkModal" class="modal">
+        <div class="modal-content bookmark-modal">
+            <h2>➕ Add Bookmark</h2>
+            <div class="bookmark-form">
+                <label for="bookmarkName">Name:</label>
+                <input type="text" id="bookmarkName" placeholder="e.g., Facebook, Twitter">
+                
+                <label for="bookmarkUrl">URL:</label>
+                <input type="url" id="bookmarkUrl" placeholder="https://example.com">
+                
+                <label for="bookmarkIcon">Icon URL (optional):</label>
+                <input type="url" id="bookmarkIcon" placeholder="https://example.com/favicon.ico">
+                
+                <label>Icon Color:</label>
+                <div class="color-options-inline">
+                    <input type="color" id="bookmarkColor" value="#4285F4">
+                    <span>or</span>
+                    <select id="colorPreset">
+                        <option value="">Choose preset</option>
+                        <option value="#4285F4">Blue</option>
+                        <option value="#EA4335">Red</option>
+                        <option value="#34A853">Green</option>
+                        <option value="#FBBC04">Yellow</option>
+                        <option value="#9333EA">Purple</option>
+                        <option value="#EC4899">Pink</option>
+                        <option value="#F59E0B">Orange</option>
+                        <option value="#06B6D4">Cyan</option>
+                    </select>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button id="saveBookmark" class="save-btn">Save Bookmark</button>
+                    <button id="closeBookmarkModal" class="cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h2>⚙️ Settings</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="wallpaper">🖼️ Wallpaper</button>
+                <button class="tab-btn" data-tab="colors">🎨 Colors</button>
+            </div>
+
+            <!-- Wallpaper Tab -->
+            <div class="tab-content active" id="wallpaper-tab">
+                <div class="wallpaper-options">
+                    <label for="wallpaperUrl">Wallpaper URL:</label>
+                    <input type="text" id="wallpaperUrl" placeholder="Enter image URL">
+                    <button id="setWallpaper">Set Wallpaper</button>
+                    
+                    <p>অথবা</p>
+                    
+                    <label for="wallpaperFile">Upload Image:</label>
+                    <input type="file" id="wallpaperFile" accept="image/*">
+                    <button id="uploadWallpaper">Upload</button>
+                    
+                    <button id="resetWallpaper">Reset to Default</button>
+                </div>
+            </div>
+
+            <!-- Colors Tab -->
+            <div class="tab-content" id="colors-tab">
+                <div class="color-options">
+                    <h3>Gradient Color Picker</h3>
+                    <div class="color-picker-group">
+                        <div>
+                            <label for="color1">Color 1:</label>
+                            <input type="color" id="color1" value="#667eea">
+                        </div>
+                        <div>
+                            <label for="color2">Color 2:</label>
+                            <input type="color" id="color2" value="#764ba2">
+                        </div>
+                    </div>
+                    <button id="applyGradient">Apply Gradient</button>
+
+                    <h3 style="margin-top: 30px;">Pre-made Themes</h3>
+                    <div class="theme-grid">
+                        <div class="theme-card" data-colors="#667eea,#764ba2">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                            <span>Purple Dream</span>
+                        </div>
+                        <div class="theme-card" data-colors="#f093fb,#f5576c">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                            <span>Pink Sunset</span>
+                        </div>
+                        <div class="theme-card" data-colors="#4facfe,#00f2fe">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                            <span>Ocean Blue</span>
+                        </div>
+                        <div class="theme-card" data-colors="#43e97b,#38f9d7">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"></div>
+                            <span>Fresh Mint</span>
+                        </div>
+                        <div class="theme-card" data-colors="#fa709a,#fee140">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #fa709a, #fee140);"></div>
+                            <span>Warm Peach</span>
+                        </div>
+                        <div class="theme-card" data-colors="#30cfd0,#330867">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #30cfd0, #330867);"></div>
+                            <span>Deep Ocean</span>
+                        </div>
+                    </div>
+                    
+                    <button id="resetColors" style="margin-top: 20px;">Reset to Default Colors</button>
+                </div>
+            </div>
+
+            <button id="closeModal" class="close-btn">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

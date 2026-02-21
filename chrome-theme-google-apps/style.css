@@ -1,0 +1,247 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+
+#wallpaper-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+.overlay {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.top-bar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.settings-btn {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.settings-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.time-display {
+    font-size: 80px;
+    font-weight: 300;
+    color: white;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    margin-bottom: 60px;
+    letter-spacing: 2px;
+}
+
+.google-apps {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 30px;
+}
+
+.app-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.app-icon:hover {
+    transform: translateY(-5px);
+}
+
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.app-icon:hover .icon-circle {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.app-icon span {
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 40px;
+    border-radius: 15px;
+    width: 500px;
+    max-width: 90%;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h2 {
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 24px;
+}
+
+.wallpaper-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.wallpaper-options label {
+    color: #555;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.wallpaper-options input[type="text"],
+.wallpaper-options input[type="file"] {
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border 0.3s ease;
+}
+
+.wallpaper-options input[type="text"]:focus {
+    outline: none;
+    border-color: #4285F4;
+}
+
+.wallpaper-options button {
+    padding: 12px 24px;
+    background: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.wallpaper-options button:hover {
+    background: #3367D6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.wallpaper-options p {
+    text-align: center;
+    color: #999;
+    margin: 10px 0;
+}
+
+#resetWallpaper {
+    background: #EA4335;
+}
+
+#resetWallpaper:hover {
+    background: #D33B2C;
+}
+
+.close-btn {
+    margin-top: 20px;
+    background: #666 !important;
+}
+
+.close-btn:hover {
+    background: #555 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .app-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .time-display {
+        font-size: 50px;
+    }
+    
+    .app-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    .google-apps {
+        padding: 30px;
+    }
+    
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}

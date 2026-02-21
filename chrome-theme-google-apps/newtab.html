@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Tab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="wallpaper-container"></div>
+    
+    <div class="overlay">
+        <div class="top-bar">
+            <div class="settings-btn" id="settingsBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="time-display" id="timeDisplay"></div>
+
+        <div class="google-apps">
+            <div class="app-grid">
+                <a href="https://mail.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #EA4335;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                    </div>
+                    <span>Gmail</span>
+                </a>
+
+                <a href="https://drive.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #4285F4;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H5v-2h9v2zm3-4H5v-2h12v2zm0-4H5V7h12v2z"/>
+                        </svg>
+                    </div>
+                    <span>Drive</span>
+                </a>
+
+                <a href="https://calendar.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #1A73E8;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/>
+                        </svg>
+                    </div>
+                    <span>Calendar</span>
+                </a>
+
+                <a href="https://meet.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #00897B;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                        </svg>
+                    </div>
+                    <span>Meet</span>
+                </a>
+
+                <a href="https://photos.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #F4B400;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                        </svg>
+                    </div>
+                    <span>Photos</span>
+                </a>
+
+                <a href="https://docs.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #4285F4;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                        </svg>
+                    </div>
+                    <span>Docs</span>
+                </a>
+
+                <a href="https://sheets.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #0F9D58;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                    </div>
+                    <span>Sheets</span>
+                </a>
+
+                <a href="https://slides.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #F4B400;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7V7h10v6z"/>
+                        </svg>
+                    </div>
+                    <span>Slides</span>
+                </a>
+
+                <a href="https://www.youtube.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #FF0000;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        </svg>
+                    </div>
+                    <span>YouTube</span>
+                </a>
+
+                <a href="https://maps.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #34A853;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    </div>
+                    <span>Maps</span>
+                </a>
+
+                <a href="https://translate.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #4285F4;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+                        </svg>
+                    </div>
+                    <span>Translate</span>
+                </a>
+
+                <a href="https://keep.google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle" style="background: #F4B400;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                        </svg>
+                    </div>
+                    <span>Keep</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h2>Wallpaper Settings</h2>
+            <div class="wallpaper-options">
+                <label for="wallpaperUrl">Wallpaper URL:</label>
+                <input type="text" id="wallpaperUrl" placeholder="Enter image URL">
+                <button id="setWallpaper">Set Wallpaper</button>
+                
+                <p>অথবা</p>
+                
+                <label for="wallpaperFile">Upload Image:</label>
+                <input type="file" id="wallpaperFile" accept="image/*">
+                <button id="uploadWallpaper">Upload</button>
+                
+                <button id="resetWallpaper">Reset to Default</button>
+            </div>
+            <button id="closeModal" class="close-btn">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
