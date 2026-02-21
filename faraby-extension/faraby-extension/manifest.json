@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Faraby Homescreen",
+  "version": "1.0",
+  "description": "A beautiful new tab homescreen with search, weather, clock and quick apps.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [],
+  "icons": {
+    "16":  "icons/icon16.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

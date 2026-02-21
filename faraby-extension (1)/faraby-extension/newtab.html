@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Tab</title>
+<style>
+/* ── RESET ── */
+*{margin:0;padding:0;box-sizing:border-box;}
+
+/* ── FONTS (system stack, no external) ── */
+body{
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  color:#fff;
+  width:100vw; height:100vh;
+  overflow:hidden;
+  background:#061a1a;
+}
+
+/* ── BACKGROUND ── */
+.bg{
+  position:fixed; inset:0; z-index:0;
+  background:#061a1a;
+}
+.bg::before{
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 60% 70% at 15% 55%, #0e4f42 0%, transparent 60%),
+    radial-gradient(ellipse 50% 55% at 78% 18%, #0a3d38 0%, transparent 58%),
+    radial-gradient(ellipse 45% 40% at 88% 82%, #083530 0%, transparent 55%),
+    radial-gradient(ellipse 35% 35% at 50% 100%, #105040 0%, transparent 50%);
+}
+.bg::after{
+  content:'';
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,204,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,204,.022) 1px, transparent 1px);
+  background-size:60px 60px;
+}
+.orb{position:absolute;border-radius:50%;pointer-events:none;}
+.o1{width:420px;height:420px;background:radial-gradient(circle,rgba(0,180,140,.22) 0%,transparent 70%);top:-100px;left:-80px;}
+.o2{width:320px;height:320px;background:radial-gradient(circle,rgba(0,200,160,.15) 0%,transparent 70%);bottom:30px;right:50px;}
+.o3{width:240px;height:240px;background:radial-gradient(circle,rgba(0,229,204,.12) 0%,transparent 70%);top:38%;left:36%;}
+
+/* ── PAGE ── */
+.page{
+  position:relative;z-index:1;
+  width:100%;height:100vh;
+  display:flex;flex-direction:column;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 28px 6px;
+}
+.tbtn{
+  width:40px;height:40px;
+  background:linear-gradient(145deg,#0e2e2e,#0a2424);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,.55),0 2px 6px rgba(0,229,204,.07),inset 0 1px 0 rgba(255,255,255,.06);
+  transition:transform .18s,box-shadow .18s;
+  border:none;
+}
+.tbtn:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.55),0 4px 14px rgba(0,229,204,.18),inset 0 1px 0 rgba(255,255,255,.08);}
+.tbtn:active{transform:translateY(0);}
+.tbr{display:flex;gap:10px;}
+
+/* ── MAIN ── */
+.main{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 55px;gap:60px;
+}
+
+/* ── CLOCK SIDE ── */
+.cside{display:flex;flex-direction:column;gap:22px;flex-shrink:0;}
+
+.ccirc{
+  width:198px;height:198px;
+  background:linear-gradient(145deg,#0e2e2e,#0a2020);
+  border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;
+  box-shadow:
+    0 22px 55px rgba(0,0,0,.72),
+    0 6px 22px rgba(0,229,204,.12),
+    inset 0 1px 2px rgba(255,255,255,.07),
+    inset 0 -2px 6px rgba(0,0,0,.4);
+  transition:transform .25s,box-shadow .25s;
+}
+.ccirc:hover{
+  transform:translateY(-5px);
+  box-shadow:0 30px 65px rgba(0,0,0,.75),0 8px 30px rgba(0,229,204,.2),inset 0 1px 2px rgba(255,255,255,.09);
+}
+.cdate{font-size:13px;color:rgba(255,255,255,.42);letter-spacing:1.5px;font-weight:400;}
+.ctime{
+  font-size:64px;font-weight:700;letter-spacing:-2px;
+  color:#00e5cc;line-height:1;
+  text-shadow:0 0 28px rgba(0,229,204,.55),0 0 55px rgba(0,229,204,.2);
+}
+.campm{font-size:12px;color:rgba(255,255,255,.32);letter-spacing:3px;margin-top:3px;}
+
+.gname{font-size:18px;font-weight:600;color:#fff;}
+.gsub{font-size:14px;font-weight:300;color:rgba(255,255,255,.42);margin-top:4px;}
+
+/* ── WIDGETS ── */
+.wids{display:flex;flex-direction:column;gap:11px;flex:1;max-width:516px;}
+
+/* card */
+.card{
+  background:linear-gradient(145deg,#0e2e2c,#0b2525);
+  border-radius:20px;
+  box-shadow:0 14px 42px rgba(0,0,0,.58),0 4px 12px rgba(0,229,204,.06),inset 0 1px 2px rgba(255,255,255,.06);
+  transition:transform .22s,box-shadow .22s;
+  cursor:pointer;
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 22px 56px rgba(0,0,0,.62),0 6px 22px rgba(0,229,204,.13),inset 0 1px 2px rgba(255,255,255,.08);
+}
+
+/* weather */
+.wrow{display:flex;gap:11px;align-items:stretch;}
+.wcrd{flex:1;padding:16px 18px 14px;}
+.wlbl{font-size:17px;font-weight:500;color:#fff;margin-bottom:12px;}
+.hrow{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.hbdg{
+  background:#00e5cc;color:#000;
+  font-size:11px;font-weight:700;
+  padding:4px 13px;border-radius:30px;white-space:nowrap;
+  box-shadow:0 4px 14px rgba(0,229,204,.45);
+}
+.hbar{flex:1;height:3px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.hfil{width:16%;height:100%;background:#00e5cc;box-shadow:0 0 8px rgba(0,229,204,.6);}
+.chips{display:flex;gap:7px;flex-wrap:wrap;}
+.chip{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.07);
+  border-radius:30px;padding:6px 13px;
+  font-size:12px;color:rgba(255,255,255,.75);
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);
+  transition:transform .18s,background .18s;
+  border:none;
+}
+.chip:hover{background:rgba(255,255,255,.12);transform:translateY(-2px);}
+.chip.ac{
+  background:#00e5cc;color:#000;font-weight:700;
+  box-shadow:0 5px 18px rgba(0,229,204,.5),inset 0 1px 0 rgba(255,255,255,.3);
+}
+.chip.ac:hover{background:#00f0d5;}
+
+.tball{
+  width:110px;
+  background:linear-gradient(145deg,#0e2e2c,#0b2020);
+  border-radius:50%;aspect-ratio:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;flex-shrink:0;cursor:pointer;
+  box-shadow:0 14px 42px rgba(0,0,0,.62),0 4px 14px rgba(0,229,204,.1),inset 0 1px 2px rgba(255,255,255,.06);
+  transition:transform .22s,box-shadow .22s;
+}
+.tball:hover{transform:translateY(-5px);box-shadow:0 22px 52px rgba(0,0,0,.68),0 6px 22px rgba(0,229,204,.18);}
+.tval{font-size:34px;font-weight:700;line-height:1;color:#fff;}
+.tval sup{font-size:14px;vertical-align:super;}
+
+/* search */
+.sbar{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+}
+.sin{
+  flex:1;background:none;border:none;outline:none;
+  font-family:inherit;font-size:14px;color:#fff;
+}
+.sin::placeholder{color:rgba(255,255,255,.22);}
+.micbtn{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 10px rgba(0,0,0,.3);
+  transition:background .18s,transform .18s;
+}
+.micbtn:hover{background:rgba(0,229,204,.14);transform:scale(1.1);}
+.micbtn.on svg{animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+.sbtn{
+  background:linear-gradient(130deg,#00e5cc 0%,#00a896 100%);
+  color:#000;border:none;border-radius:11px;
+  padding:9px 22px;
+  font-family:inherit;font-size:13px;font-weight:700;
+  letter-spacing:.3px;cursor:pointer;white-space:nowrap;
+  box-shadow:0 6px 22px rgba(0,229,204,.5),0 2px 6px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.3);
+  transition:transform .18s,box-shadow .18s;
+}
+.sbtn:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,229,204,.55),inset 0 1px 0 rgba(255,255,255,.35);}
+.sbtn:active{transform:translateY(0);}
+
+/* engines */
+.ewrap{display:flex;align-items:center;gap:12px;padding:12px 16px;}
+.etxt{font-size:11px;color:rgba(255,255,255,.28);font-weight:500;letter-spacing:.5px;min-width:56px;text-align:center;}
+.egrid{display:flex;flex-wrap:wrap;gap:7px;flex:1;}
+.eng{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.06);border-radius:30px;padding:6px 13px;
+  font-size:12px;color:rgba(255,255,255,.58);cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.07);
+  transition:transform .18s,background .18s,color .18s;
+  border:none;
+}
+.eng:hover{background:rgba(255,255,255,.1);transform:translateY(-3px);color:#fff;}
+.eng.on{background:rgba(0,229,204,.15);color:#00e5cc;box-shadow:0 4px 18px rgba(0,229,204,.22);}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);transition:background .2s;flex-shrink:0;}
+.eng.on .dot{background:#00e5cc;box-shadow:0 0 6px rgba(0,229,204,.7);}
+.eico{width:18px;height:18px;border-radius:50%;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+
+/* ── DOCK ── */
+.dock{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 60px 24px 22px;
+}
+.aibtn{
+  display:flex;align-items:center;gap:9px;
+  background:linear-gradient(145deg,#0e2e2c,#0b2525);
+  border-radius:40px;padding:10px 20px;
+  font-size:13px;font-weight:600;letter-spacing:.3px;cursor:pointer;border:none;color:#fff;
+  box-shadow:0 8px 28px rgba(0,0,0,.55),0 3px 10px rgba(0,229,204,.1),inset 0 1px 0 rgba(255,255,255,.06);
+  transition:transform .22s,box-shadow .22s;
+}
+.aibtn:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.62),0 5px 18px rgba(0,229,204,.2);}
+.aibtn:active{transform:translateY(0);}
+.aiico{
+  width:26px;height:26px;
+  background:linear-gradient(135deg,#00e5cc,#009e8f);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 12px rgba(0,229,204,.55);
+}
+.dapps{display:flex;gap:10px;align-items:center;}
+.dapp{
+  width:50px;height:50px;border-radius:50%;
+  background:linear-gradient(145deg,#0e2e2c,#0a2020);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;border:none;
+  box-shadow:0 8px 28px rgba(0,0,0,.62),0 3px 10px rgba(0,229,204,.08),inset 0 1px 0 rgba(255,255,255,.07),inset 0 -2px 5px rgba(0,0,0,.35);
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s;
+}
+.dapp:hover{
+  transform:translateY(-9px) scale(1.1);
+  box-shadow:0 20px 46px rgba(0,0,0,.68),0 6px 24px rgba(0,229,204,.24),inset 0 1px 0 rgba(255,255,255,.1);
+}
+.dapp:active{transform:translateY(-2px) scale(.97);}
+.tip{
+  position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);
+  background:#0d2828;color:#00e5cc;
+  font-size:10px;font-weight:700;
+  padding:4px 10px;border-radius:8px;white-space:nowrap;
+  pointer-events:none;opacity:0;transition:opacity .2s;
+  box-shadow:0 4px 14px rgba(0,0,0,.5);letter-spacing:.4px;
+}
+.dapp:hover .tip{opacity:1;}
+.hbtn{
+  width:50px;height:50px;border-radius:50%;
+  background:linear-gradient(145deg,#0e2e2c,#0a2020);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border:none;
+  box-shadow:0 8px 28px rgba(0,0,0,.62),0 0 0 2.5px rgba(0,229,204,.6),0 3px 12px rgba(0,229,204,.15),inset 0 1px 0 rgba(255,255,255,.07);
+  transition:transform .22s,box-shadow .22s;
+}
+.hbtn:hover{transform:translateY(-5px);box-shadow:0 18px 42px rgba(0,0,0,.68),0 0 0 2.5px #00e5cc,0 6px 24px rgba(0,229,204,.32);}
+.hin{width:17px;height:17px;border-radius:50%;border:2.5px solid rgba(0,229,204,.8);box-shadow:0 0 10px rgba(0,229,204,.4);}
+
+/* ── OVERLAYS ── */
+.ov{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(0,8,8,.75);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;
+}
+.ov.open{display:flex;}
+.panel{
+  background:linear-gradient(145deg,#0d2828,#0b2020);
+  border-radius:22px;padding:24px 26px;min-width:340px;max-width:90vw;
+  box-shadow:0 30px 80px rgba(0,0,0,.78),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.ph{font-size:15px;font-weight:600;color:#00e5cc;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;letter-spacing:.3px;}
+.px{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:15px;color:rgba(255,255,255,.4);
+  border:none;
+  transition:background .18s,color .18s;
+}
+.px:hover{background:rgba(0,229,204,.12);color:#00e5cc;}
+.panel ul{list-style:none;}
+.panel ul li{
+  padding:11px 14px;border-radius:14px;margin-bottom:7px;
+  background:rgba(255,255,255,.04);
+  font-size:13px;color:rgba(255,255,255,.7);cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.04);
+  transition:background .18s,transform .18s,color .18s;
+  display:flex;align-items:center;gap:10px;
+}
+.panel ul li:hover{background:rgba(0,229,204,.09);color:#fff;transform:translateX(4px);}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.pgi{
+  padding:16px 10px;border-radius:16px;background:rgba(255,255,255,.04);
+  cursor:pointer;text-align:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);
+  transition:background .18s,transform .2s;
+}
+.pgi:hover{background:rgba(0,229,204,.09);transform:translateY(-3px);}
+.pgi .ic{font-size:24px;margin-bottom:6px;}
+.pgi .lb{font-size:11px;color:rgba(255,255,255,.42);font-weight:500;letter-spacing:.3px;}
+
+/* TOAST */
+#toast{
+  position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-70px);
+  background:#0e2e2c;color:#00e5cc;
+  padding:9px 22px;border-radius:40px;
+  font-size:12px;font-weight:700;letter-spacing:.5px;
+  box-shadow:0 8px 28px rgba(0,0,0,.55),0 2px 10px rgba(0,229,204,.2);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  z-index:999;pointer-events:none;white-space:nowrap;
+}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* task input */
+.tinput{
+  width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(0,229,204,.18);border-radius:12px;
+  padding:9px 13px;color:#fff;font-family:inherit;font-size:13px;outline:none;
+}
+.tinput::placeholder{color:rgba(255,255,255,.3);}
+.addbtn{
+  background:linear-gradient(135deg,#00e5cc,#00a896);color:#000;
+  border:none;border-radius:12px;padding:9px 16px;
+  font-weight:700;cursor:pointer;font-size:13px;
+  box-shadow:0 4px 14px rgba(0,229,204,.45);
+  white-space:nowrap;
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+</div>
+<div id="toast"></div>
+
+<div class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <button class="tbtn" id="btn-tasks" title="Tasks">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00e5cc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+        <line x1="14" y1="5" x2="21" y2="5"/><line x1="14" y1="9" x2="21" y2="9"/>
+        <rect x="3" y="13" width="7" height="7" rx="1.5"/>
+        <line x1="14" y1="15" x2="21" y2="15"/><line x1="14" y1="19" x2="21" y2="19"/>
+      </svg>
+    </button>
+    <div class="tbr">
+      <button class="tbtn" id="btn-bookmarks" title="Bookmarks">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#00e5cc"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
+      </button>
+      <button class="tbtn" id="btn-apps" title="All Apps">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#00e5cc">
+          <circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/>
+          <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+          <circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- CLOCK -->
+    <div class="cside">
+      <div class="ccirc" id="btn-clock">
+        <div class="cdate" id="cdate">20 Fri</div>
+        <div class="ctime" id="ctime">2:08</div>
+        <div class="campm" id="campm">PM</div>
+      </div>
+      <div>
+        <div class="gname">Faraby Abdulla Al Rabby</div>
+        <div class="gsub" id="gsub">Good Afternoon!</div>
+      </div>
+    </div>
+
+    <!-- WIDGETS -->
+    <div class="wids">
+
+      <!-- Weather row -->
+      <div class="wrow">
+        <div class="card wcrd" id="btn-weather">
+          <div class="wlbl">Sunny</div>
+          <div class="hrow">
+            <div class="hbdg">Humidity 16%</div>
+            <div class="hbar"><div class="hfil"></div></div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#00e5cc" style="flex-shrink:0;filter:drop-shadow(0 0 5px rgba(0,229,204,.5))">
+              <path d="M12 2C12 2 5 10.5 5 15a7 7 0 0 0 14 0C19 10.5 12 2 12 2z"/>
+            </svg>
+          </div>
+          <div class="chips">
+            <button class="chip">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00e5cc" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+              Feels 31.1°C
+            </button>
+            <button class="chip ac" id="btn-map">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#000"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              Puratan Pa...
+            </button>
+          </div>
+        </div>
+
+        <div class="tball card" id="btn-weather2">
+          <div class="tval">33<sup>°C</sup></div>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e8a020" stroke-width="1.8" stroke-linecap="round" style="filter:drop-shadow(0 0 8px rgba(232,160,32,.65))">
+            <circle cx="12" cy="12" r="5" fill="#e8a020" stroke="none"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Search bar -->
+      <div class="card sbar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="sin" id="si" type="text" placeholder="Type here..." autofocus>
+        <button class="micbtn" id="mic" title="Voice search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="2" stroke-linecap="round">
+            <rect x="9" y="2" width="6" height="11" rx="3"/>
+            <path d="M5 10a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+        <button class="sbtn" id="btn-search">Search</button>
+      </div>
+
+      <!-- Engines -->
+      <div class="card ewrap">
+        <div class="etxt">Search With</div>
+        <div class="egrid">
+
+          <button class="eng on" data-url="https://www.google.com/search?q=">
+            <div class="eico" style="background:#00e5cc;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round">
+                <circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="15.5" y2="15.5"/>
+              </svg>
+            </div>
+            Default <div class="dot"></div>
+          </button>
+
+          <button class="eng" data-url="https://www.google.com/search?q=">
+            <div class="eico" style="background:#fff;">
+              <svg width="13" height="13" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+            </div>
+            Google <div class="dot"></div>
+          </button>
+
+          <button class="eng" data-url="https://duckduckgo.com/?q=">
+            <div class="eico" style="background:#de5833;">
+              <svg width="12" height="12" viewBox="0 0 32 32" fill="white">
+                <ellipse cx="16" cy="17" rx="10" ry="11"/>
+                <circle cx="11" cy="13" r="2" fill="#de5833"/><circle cx="21" cy="13" r="2" fill="#de5833"/>
+                <ellipse cx="16" cy="22" rx="4" ry="2" fill="#de5833"/>
+              </svg>
+            </div>
+            Duck <div class="dot"></div>
+          </button>
+
+          <button class="eng" data-url="https://www.bing.com/search?q=">
+            <div class="eico" style="background:#008373;">
+              <svg width="10" height="12" viewBox="0 0 18 22" fill="white"><path d="M2 1v20l5-3 7-4-4-3 4-5-7 2V1z"/></svg>
+            </div>
+            Bing <div class="dot"></div>
+          </button>
+
+          <button class="eng" data-url="https://search.brave.com/search?q=">
+            <div class="eico" style="background:#1a1a1a;">
+              <svg width="11" height="12" viewBox="0 0 24 26" fill="#ff5000">
+                <path d="M12 1L2 6v8c0 6 4.5 11 10 12 5.5-1 10-6 10-12V6L12 1zm0 3.5L20 9v5c0 4.5-3.5 8.5-8 9.5C7.5 22.5 4 18.5 4 14V9l8-4.5z"/>
+              </svg>
+            </div>
+            Brave <div class="dot"></div>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DOCK -->
+  <div class="dock">
+    <button class="aibtn" id="btn-ai">
+      <div class="aiico">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="9" height="9" rx="1.5"/><rect x="13" y="2" width="9" height="9" rx="1.5"/>
+          <rect x="2" y="13" width="9" height="9" rx="1.5"/><rect x="13" y="13" width="9" height="9" rx="1.5"/>
+        </svg>
+      </div>
+      AI Tools
+    </button>
+
+    <div class="dapps">
+      <button class="dapp" data-url="https://youtube.com">
+        <div class="tip">YouTube</div>
+        <svg width="26" height="26" viewBox="0 0 24 24">
+          <path d="M21.6 7.2S21.4 5.8 20.8 5.2c-.8-.8-1.7-.8-2-.9C16.4 4.1 12 4.1 12 4.1s-4.4 0-6.8.2c-.4.1-1.3.1-2 .9-.6.6-.8 2-.8 2S2.1 8.7 2.1 10.2v1.4c0 1.5.2 3 .2 3s.2 1.4.8 2c.8.8 1.8.8 2.2.9 1.6.1 6.7.2 6.7.2s4.4 0 6.8-.3c.4-.1 1.3-.1 2-.9.6-.6.8-2 .8-2s.2-1.5.2-3v-1.4c0-1.4-.2-3-.2-3z" fill="#00e5cc" style="filter:drop-shadow(0 0 4px rgba(0,229,204,.5))"/>
+          <polygon points="10,9 10,15 16,12" fill="#061a1a"/>
+        </svg>
+      </button>
+
+      <button class="dapp" data-url="https://mail.google.com">
+        <div class="tip">Gmail</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 0 4px rgba(0,229,204,.4))">
+          <rect x="3" y="6" width="18" height="13" rx="2" stroke="#00e5cc" stroke-width="1.8"/>
+          <polyline points="3,7 12,14 21,7" stroke="#00e5cc" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <button class="dapp" data-url="https://web.telegram.org">
+        <div class="tip">Telegram</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 0 4px rgba(0,229,204,.4))">
+          <path d="M22 3L2 10.8l7 2.5 2.5 7L17 15l5-12z" stroke="#00e5cc" stroke-width="1.8" stroke-linejoin="round" fill="none"/>
+          <line x1="9" y1="13" x2="14" y2="9" stroke="#00e5cc" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <button class="dapp" data-url="https://web.whatsapp.com">
+        <div class="tip">WhatsApp</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 0 4px rgba(0,229,204,.4))">
+          <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.05-1.34A9.93 9.93 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" stroke="#00e5cc" stroke-width="1.8" fill="none"/>
+          <path d="M9 9s0-1 1-1h1l1 2.5-1.5 1s1 2 3 3l1-1.5 2.5 1v1s-1 1-2 1C12 16 8 12 8 9z" fill="#00e5cc"/>
+        </svg>
+      </button>
+
+      <button class="dapp" data-url="https://twitter.com">
+        <div class="tip">Twitter / X</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#00e5cc" style="filter:drop-shadow(0 0 4px rgba(0,229,204,.4))">
+          <path d="M22 5.8a8.49 8.49 0 0 1-2.36.64 4.13 4.13 0 0 0 1.81-2.27 8.21 8.21 0 0 1-2.61 1A4.1 4.1 0 0 0 8.8 8.6 11.65 11.65 0 0 1 3 5.3a4.14 4.14 0 0 0 1.27 5.49A4.09 4.09 0 0 1 2.4 10v.05a4.1 4.1 0 0 0 3.29 4.02 4.13 4.13 0 0 1-1.85.07 4.1 4.1 0 0 0 3.83 2.85A8.22 8.22 0 0 1 2 18.28a11.64 11.64 0 0 0 6.29 1.84c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.35-.01-.52A8.36 8.36 0 0 0 22 5.8z"/>
+        </svg>
+      </button>
+
+      <button class="dapp" data-url="https://discord.com/app">
+        <div class="tip">Discord</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#00e5cc" style="filter:drop-shadow(0 0 4px rgba(0,229,204,.4))">
+          <path d="M20.32 4.37A19.79 19.79 0 0 0 15.52 3a13.7 13.7 0 0 0-.64 1.29 18.27 18.27 0 0 0-5.76 0A13.37 13.37 0 0 0 8.47 3 19.62 19.62 0 0 0 3.67 4.38C.53 9.12-.32 13.74.1 18.3a19.89 19.89 0 0 0 5.99 3A14.57 14.57 0 0 0 7.35 19a12.91 12.91 0 0 1-2.02-1 10.7 10.7 0 0 0 .49-.38 14.17 14.17 0 0 0 12.36 0 9.09 9.09 0 0 0 .49.38 12.94 12.94 0 0 1-2.02 1 14.62 14.62 0 0 0 1.26 2.3 19.84 19.84 0 0 0 6-3.06c.5-5.17-.85-9.75-3.59-13.77zM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.41s.96-2.41 2.16-2.41c1.19 0 2.18 1.09 2.16 2.41 0 1.33-.96 2.41-2.16 2.41zm7.96 0c-1.18 0-2.16-1.08-2.16-2.41s.97-2.41 2.16-2.41c1.2 0 2.17 1.09 2.16 2.41 0 1.33-.96 2.41-2.16 2.41z"/>
+        </svg>
+      </button>
+
+      <button class="dapp" data-url="https://app.grammarly.com">
+        <div class="tip">Grammarly</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 0 4px rgba(0,229,204,.4))">
+          <circle cx="12" cy="12" r="9" stroke="#00e5cc" stroke-width="1.8"/>
+          <path d="M15 10h-4a3 3 0 0 0 0 6h4v-3h-2" stroke="#00e5cc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="hbtn" id="btn-home">
+      <div class="hin"></div>
+    </button>
+  </div>
+
+</div><!-- end page -->
+
+<!-- ── PANELS ── -->
+<div class="ov" id="ov-tasks">
+  <div class="panel" style="min-width:360px;">
+    <div class="ph">📋 Tasks <button class="px" data-close="tasks">✕</button></div>
+    <ul id="tl">
+      <li>✅ Morning workout</li>
+      <li>📧 Reply to emails</li>
+      <li>🛒 Buy groceries</li>
+    </ul>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <input class="tinput" id="ni" type="text" placeholder="Add a task...">
+      <button class="addbtn" id="btn-addtask">Add</button>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="ov-bookmarks">
+  <div class="panel">
+    <div class="ph">🔖 Bookmarks <button class="px" data-close="bookmarks">✕</button></div>
+    <ul>
+      <li data-url="https://github.com">🐙 GitHub</li>
+      <li data-url="https://stackoverflow.com">💡 Stack Overflow</li>
+      <li data-url="https://youtube.com">▶️ YouTube</li>
+      <li data-url="https://twitter.com">🐦 Twitter / X</li>
+      <li data-url="https://mail.google.com">📧 Gmail</li>
+      <li data-url="https://claude.ai">🤖 Claude AI</li>
+    </ul>
+  </div>
+</div>
+
+<div class="ov" id="ov-apps">
+  <div class="panel" style="max-width:420px;">
+    <div class="ph">⬡ All Apps <button class="px" data-close="apps">✕</button></div>
+    <div class="pg">
+      <div class="pgi" data-url="https://youtube.com"><div class="ic">▶️</div><div class="lb">YouTube</div></div>
+      <div class="pgi" data-url="https://mail.google.com"><div class="ic">📧</div><div class="lb">Gmail</div></div>
+      <div class="pgi" data-url="https://web.telegram.org"><div class="ic">✈️</div><div class="lb">Telegram</div></div>
+      <div class="pgi" data-url="https://web.whatsapp.com"><div class="ic">💬</div><div class="lb">WhatsApp</div></div>
+      <div class="pgi" data-url="https://twitter.com"><div class="ic">🐦</div><div class="lb">Twitter</div></div>
+      <div class="pgi" data-url="https://discord.com/app"><div class="ic">🎮</div><div class="lb">Discord</div></div>
+      <div class="pgi" data-url="https://app.grammarly.com"><div class="ic">📝</div><div class="lb">Grammarly</div></div>
+      <div class="pgi" data-url="https://github.com"><div class="ic">🐙</div><div class="lb">GitHub</div></div>
+      <div class="pgi" data-url="https://claude.ai"><div class="ic">🧠</div><div class="lb">Claude AI</div></div>
+      <div class="pgi" data-url="https://chatgpt.com"><div class="ic">💡</div><div class="lb">ChatGPT</div></div>
+      <div class="pgi" data-url="https://calendar.google.com"><div class="ic">📅</div><div class="lb">Calendar</div></div>
+      <div class="pgi" data-url="https://drive.google.com"><div class="ic">💾</div><div class="lb">Drive</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="ov-clock">
+  <div class="panel" style="text-align:center;min-width:300px;">
+    <div class="ph">⏰ Clock &amp; Alarm <button class="px" data-close="clock">✕</button></div>
+    <div style="font-size:68px;font-weight:700;color:#00e5cc;text-shadow:0 0 30px rgba(0,229,204,.5);margin:10px 0;" id="pt">2:08</div>
+    <p style="color:rgba(255,255,255,.3);font-size:11px;letter-spacing:.8px;margin-bottom:20px;">DHAKA · GMT+6</p>
+    <ul>
+      <li data-toast="⏰ Alarm set: 7:00 AM">🌅 Morning Alarm — 7:00 AM</li>
+      <li data-toast="⏰ Reminder: 12:00 PM">☀️ Noon Reminder — 12:00 PM</li>
+      <li data-toast="⏰ Alarm set: 10:00 PM">🌙 Night Alarm — 10:00 PM</li>
+    </ul>
+  </div>
+</div>
+
+<div class="ov" id="ov-ai">
+  <div class="panel">
+    <div class="ph">🤖 AI Tools <button class="px" data-close="ai">✕</button></div>
+    <ul>
+      <li data-url="https://claude.ai">🧠 Claude AI — Anthropic</li>
+      <li data-url="https://chatgpt.com">💡 ChatGPT — OpenAI</li>
+      <li data-url="https://gemini.google.com">✨ Gemini — Google</li>
+      <li data-url="https://copilot.microsoft.com">🪟 Copilot — Microsoft</li>
+      <li data-url="https://www.perplexity.ai">🔍 Perplexity AI</li>
+      <li data-url="https://midjourney.com">🎨 Midjourney</li>
+    </ul>
+  </div>
+</div>
+
+<div class="ov" id="ov-weather">
+  <div class="panel">
+    <div class="ph">⛅ Weather — Puratan Pa <button class="px" data-close="weather">✕</button></div>
+    <div style="text-align:center;margin:10px 0 20px;">
+      <div style="font-size:64px;font-weight:700;color:#00e5cc;text-shadow:0 0 30px rgba(0,229,204,.5);">33°C</div>
+      <p style="color:rgba(255,255,255,.4);font-size:14px;margin-top:4px;">☀️ Sunny · Feels like 31.1°C</p>
+    </div>
+    <ul>
+      <li>💧 Humidity: 16%</li>
+      <li>💨 Wind: 12 km/h NW</li>
+      <li>👁️ Visibility: 10 km</li>
+      <li>🌅 Sunrise 6:22 AM · 🌇 Sunset 5:58 PM</li>
+      <li data-url="https://weather.google.com">🌐 Open Full Forecast →</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ── CLOCK ──
+  var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function tick(){
+    var n=new Date();
+    document.getElementById('cdate').textContent=n.getDate()+' '+DAYS[n.getDay()];
+    var h=n.getHours(),m=n.getMinutes(),ap=h>=12?'PM':'AM';
+    h=h%12||12;
+    var ts=h+':'+(m<10?'0':'')+m;
+    document.getElementById('ctime').textContent=ts;
+    document.getElementById('campm').textContent=ap;
+    var pt=document.getElementById('pt'); if(pt) pt.textContent=ts;
+    var hr=n.getHours();
+    document.getElementById('gsub').textContent=
+      hr<5?'Good Night!':hr<12?'Good Morning!':hr<17?'Good Afternoon!':'Good Evening!';
+  }
+  tick(); setInterval(tick,1000);
+
+  // ── SEARCH ──
+  var activeEng='https://www.google.com/search?q=';
+
+  document.querySelectorAll('.eng').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.eng').forEach(function(e){e.classList.remove('on');});
+      btn.classList.add('on');
+      activeEng=btn.getAttribute('data-url');
+      showToast('Engine → '+btn.textContent.trim().replace(/\s+/g,' ').split(' ')[0]);
+    });
+  });
+
+  function doSearch(){
+    var q=document.getElementById('si').value.trim();
+    if(!q){showToast('⚠️ Type something first!');return;}
+    window.location.href=activeEng+encodeURIComponent(q);
+  }
+  document.getElementById('btn-search').addEventListener('click',doSearch);
+  document.getElementById('si').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
+
+  // ── MIC ──
+  document.getElementById('mic').addEventListener('click',function(){
+    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){showToast('🎤 Not supported in this browser');return;}
+    var r=new SR(); r.lang='en-US'; r.interimResults=false;
+    var b=document.getElementById('mic');
+    b.classList.add('on'); showToast('🎤 Listening...');
+    r.onresult=function(e){
+      var t=e.results[0][0].transcript;
+      document.getElementById('si').value=t;
+      b.classList.remove('on'); showToast('✅ '+t);
+    };
+    r.onerror=function(){b.classList.remove('on');showToast('❌ Mic error');};
+    r.onend=function(){b.classList.remove('on');};
+    r.start();
+  });
+
+  // ── OPEN URL ──
+  function goTo(url){ window.location.href=url; }
+
+  // ── DOCK APPS ──
+  document.querySelectorAll('.dapp').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      goTo(btn.getAttribute('data-url'));
+    });
+  });
+
+  // ── TOPBAR BUTTONS ──
+  document.getElementById('btn-tasks').addEventListener('click',function(){openOv('tasks');});
+  document.getElementById('btn-bookmarks').addEventListener('click',function(){openOv('bookmarks');});
+  document.getElementById('btn-apps').addEventListener('click',function(){openOv('apps');});
+  document.getElementById('btn-clock').addEventListener('click',function(){openOv('clock');});
+  document.getElementById('btn-weather').addEventListener('click',function(){openOv('weather');});
+  document.getElementById('btn-weather2').addEventListener('click',function(){openOv('weather');});
+  document.getElementById('btn-ai').addEventListener('click',function(){openOv('ai');});
+  document.getElementById('btn-map').addEventListener('click',function(e){e.stopPropagation();goTo('https://maps.google.com/?q=Puratan+Paltan,Dhaka');});
+  document.getElementById('btn-home').addEventListener('click',function(){showToast('🏠 Home');});
+
+  // ── PANEL ITEMS with data-url ──
+  document.querySelectorAll('.panel [data-url]').forEach(function(el){
+    el.addEventListener('click',function(){goTo(el.getAttribute('data-url'));});
+  });
+
+  // ── PANEL ITEMS with data-toast ──
+  document.querySelectorAll('.panel [data-toast]').forEach(function(el){
+    el.addEventListener('click',function(){showToast(el.getAttribute('data-toast'));});
+  });
+
+  // ── CLOSE BUTTONS ──
+  document.querySelectorAll('[data-close]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      closeOv(btn.getAttribute('data-close'));
+    });
+  });
+
+  // ── OVERLAY CLOSE ON BACKDROP ──
+  document.querySelectorAll('.ov').forEach(function(ov){
+    ov.addEventListener('click',function(e){
+      if(e.target===ov) ov.classList.remove('open');
+    });
+  });
+
+  // ── ESC KEY ──
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      document.querySelectorAll('.ov.open').forEach(function(o){o.classList.remove('open');});
+    }
+  });
+
+  // ── TASKS ──
+  document.getElementById('btn-addtask').addEventListener('click',addTask);
+  document.getElementById('ni').addEventListener('keydown',function(e){if(e.key==='Enter')addTask();});
+  document.querySelectorAll('#tl li').forEach(function(li){li.addEventListener('click',function(){toggleTask(li);});});
+  function addTask(){
+    var inp=document.getElementById('ni'),v=inp.value.trim(); if(!v)return;
+    var li=document.createElement('li'); li.textContent='📌 '+v;
+    li.addEventListener('click',function(){toggleTask(li);});
+    document.getElementById('tl').appendChild(li); inp.value='';
+  }
+  function toggleTask(li){
+    var done=li.style.opacity==='0.4';
+    li.style.opacity=done?'1':'0.4';
+    li.style.textDecoration=done?'none':'line-through';
+  }
+
+  // ── HELPERS ──
+  function openOv(id){ document.getElementById('ov-'+id).classList.add('open'); }
+  function closeOv(id){ document.getElementById('ov-'+id).classList.remove('open'); }
+
+  var tt;
+  function showToast(msg){
+    var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(tt); tt=setTimeout(function(){t.classList.remove('show');},2600);
+  }
+})();
+</script>
+</body>
+</html>

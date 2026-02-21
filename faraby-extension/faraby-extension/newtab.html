@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Tab</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'Exo 2', sans-serif;
+  color: #fff;
+}
+
+/* ══ BACKGROUND ══ */
+.bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: #061a1a;
+}
+.bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 70% at 15% 55%, #0e4f42 0%, transparent 65%),
+    radial-gradient(ellipse 45% 55% at 75% 20%, #0a3d38 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 80%, #083530 0%, transparent 55%),
+    radial-gradient(ellipse 30% 30% at 50% 100%, #105040 0%, transparent 50%);
+}
+.bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,204,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,204,.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.orb { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; }
+.orb1 { width:420px; height:420px; background:rgba(0,180,140,.16); top:-100px; left:-80px; }
+.orb2 { width:320px; height:320px; background:rgba(0,200,160,.11); bottom:40px; right:60px; }
+.orb3 { width:220px; height:220px; background:rgba(0,229,204,.09); top:40%; left:38%; }
+
+/* ══ LAYOUT ══ */
+.page {
+  position: relative; z-index: 1;
+  width: 100%; height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 28px 6px;
+}
+.tb-btn {
+  width: 40px; height: 40px;
+  background: #0e2e2e;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 2px 6px rgba(0,229,204,.08);
+  transition: transform .18s, box-shadow .18s, background .18s;
+}
+.tb-btn:hover {
+  background: #133d3d;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 4px 14px rgba(0,229,204,.18);
+}
+.tb-btn:active { transform: translateY(0); }
+.tb-right { display: flex; gap: 10px; }
+
+/* ── MAIN AREA ── */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 60px;
+  gap: 64px;
+}
+
+/* ── CLOCK ── */
+.clock-side { display: flex; flex-direction: column; gap: 22px; flex-shrink: 0; }
+
+.clock-circle {
+  width: 200px; height: 200px;
+  background: linear-gradient(145deg, #0e2e2e, #0a2020);
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 20px 50px rgba(0,0,0,.7),
+    0 6px 20px rgba(0,229,204,.12),
+    inset 0 1px 2px rgba(255,255,255,.07),
+    inset 0 -2px 6px rgba(0,0,0,.4);
+  transition: transform .25s, box-shadow .25s;
+}
+.clock-circle:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 28px 60px rgba(0,0,0,.7), 0 8px 30px rgba(0,229,204,.2), inset 0 1px 2px rgba(255,255,255,.08);
+}
+.cl-date { font-size: 13px; color: rgba(255,255,255,.45); letter-spacing: 1.5px; }
+.cl-time {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 64px; font-weight: 700;
+  color: #00e5cc; line-height: 1; letter-spacing: -2px;
+  text-shadow: 0 0 30px rgba(0,229,204,.5), 0 0 60px rgba(0,229,204,.2);
+}
+.cl-ampm { font-size: 12px; color: rgba(255,255,255,.35); letter-spacing: 3px; margin-top: 2px; }
+
+.greet-name { font-size: 18px; font-weight: 500; color: #fff; }
+.greet-sub  { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.45); margin-top: 4px; }
+
+/* ── WIDGETS ── */
+.widgets { display: flex; flex-direction: column; gap: 11px; flex: 1; max-width: 520px; }
+
+/* card base */
+.card {
+  background: linear-gradient(145deg, #0e2e2c, #0b2525);
+  border-radius: 20px;
+  box-shadow: 0 14px 40px rgba(0,0,0,.55), 0 4px 12px rgba(0,229,204,.06), inset 0 1px 2px rgba(255,255,255,.06);
+  transition: transform .22s, box-shadow .22s;
+  cursor: pointer;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 54px rgba(0,0,0,.6), 0 6px 22px rgba(0,229,204,.13), inset 0 1px 2px rgba(255,255,255,.08);
+}
+
+/* WEATHER */
+.weather-row { display: flex; gap: 11px; align-items: stretch; }
+.weather-card { flex: 1; padding: 16px 18px 14px; }
+.w-label { font-size: 17px; font-weight: 500; color: #fff; margin-bottom: 12px; }
+.hum-row { display: flex; align-items: center; gap: 10px; margin-bottom: 11px; }
+.hum-badge {
+  background: #00e5cc; color: #000;
+  font-size: 11px; font-weight: 700;
+  padding: 4px 13px; border-radius: 30px; white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0,229,204,.45);
+}
+.hum-bar { flex: 1; height: 3px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; }
+.hum-fill { width: 16%; height: 100%; background: #00e5cc; box-shadow: 0 0 8px rgba(0,229,204,.6); }
+.chips { display: flex; gap: 7px; flex-wrap: wrap; }
+.chip {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.07);
+  border-radius: 30px; padding: 6px 13px;
+  font-size: 12px; color: rgba(255,255,255,.75);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+  transition: transform .18s, background .18s;
+}
+.chip:hover { background: rgba(255,255,255,.12); transform: translateY(-2px); }
+.chip.accent {
+  background: #00e5cc; color: #000; font-weight: 700;
+  box-shadow: 0 5px 18px rgba(0,229,204,.5), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.chip.accent:hover { background: #00f0d5; }
+
+.temp-ball {
+  width: 110px;
+  background: linear-gradient(145deg, #0e2e2c, #0b2020);
+  border-radius: 50%; aspect-ratio: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px; flex-shrink: 0; cursor: pointer;
+  box-shadow: 0 14px 40px rgba(0,0,0,.6), 0 4px 14px rgba(0,229,204,.1), inset 0 1px 2px rgba(255,255,255,.06);
+  transition: transform .22s, box-shadow .22s;
+}
+.temp-ball:hover { transform: translateY(-5px); box-shadow: 0 22px 50px rgba(0,0,0,.65), 0 6px 22px rgba(0,229,204,.18); }
+.temp-val { font-family: 'Rajdhani', sans-serif; font-size: 34px; font-weight: 700; line-height: 1; }
+.temp-val sup { font-size: 14px; vertical-align: super; }
+
+/* SEARCH */
+.search-wrap {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+}
+.srch-in {
+  flex: 1; background: none; border: none; outline: none;
+  font-family: 'Exo 2', sans-serif; font-size: 14px; color: #fff;
+}
+.srch-in::placeholder { color: rgba(255,255,255,.25); }
+.mic-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,.06); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,.3);
+  transition: background .18s, transform .18s;
+}
+.mic-btn:hover { background: rgba(0,229,204,.14); transform: scale(1.1); }
+.mic-btn.on svg { stroke: #ff5555 !important; animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.srch-btn {
+  background: linear-gradient(130deg, #00e5cc 0%, #00a896 100%);
+  color: #000; border: none; border-radius: 11px;
+  padding: 9px 22px;
+  font-family: 'Exo 2', sans-serif; font-size: 13px; font-weight: 700;
+  letter-spacing: .3px; cursor: pointer; white-space: nowrap;
+  box-shadow: 0 6px 22px rgba(0,229,204,.5), 0 2px 6px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.3);
+  transition: transform .18s, box-shadow .18s;
+}
+.srch-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,229,204,.55), 0 4px 10px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.srch-btn:active { transform: translateY(0); }
+
+/* ENGINES */
+.engines-wrap { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+.sw-txt { font-size: 11px; color: rgba(255,255,255,.3); font-weight: 500; letter-spacing: .5px; min-width: 56px; text-align: center; }
+.eng-grid { display: flex; flex-wrap: wrap; gap: 7px; flex: 1; }
+.eng {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,.06); border-radius: 30px; padding: 6px 13px;
+  font-size: 12px; color: rgba(255,255,255,.6); cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.07);
+  transition: transform .18s, background .18s, color .18s;
+}
+.eng:hover { background: rgba(255,255,255,.1); transform: translateY(-3px); color: #fff; }
+.eng.active { background: rgba(0,229,204,.15); color: #00e5cc; box-shadow: 0 4px 18px rgba(0,229,204,.25); }
+.eng .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.15); transition: background .2s; }
+.eng.active .dot { background: #00e5cc; box-shadow: 0 0 6px rgba(0,229,204,.7); }
+.eng-ico { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+
+/* ── DOCK ── */
+.dock {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 60px 22px 22px;
+}
+.ai-btn {
+  display: flex; align-items: center; gap: 9px;
+  background: linear-gradient(145deg, #0e2e2c, #0b2525);
+  border-radius: 40px; padding: 10px 20px;
+  font-size: 13px; font-weight: 600; letter-spacing: .3px; cursor: pointer;
+  box-shadow: 0 8px 28px rgba(0,0,0,.55), 0 3px 10px rgba(0,229,204,.1), inset 0 1px 0 rgba(255,255,255,.06);
+  transition: transform .22s, box-shadow .22s, background .2s;
+}
+.ai-btn:hover {
+  background: linear-gradient(145deg, #133d3d, #0e2e2c);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.6), 0 5px 18px rgba(0,229,204,.2), inset 0 1px 0 rgba(255,255,255,.09);
+}
+.ai-ico {
+  width: 26px; height: 26px;
+  background: linear-gradient(135deg, #00e5cc, #009e8f);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 12px rgba(0,229,204,.55);
+}
+.dock-apps { display: flex; gap: 10px; align-items: center; }
+.dapp {
+  width: 50px; height: 50px; border-radius: 50%;
+  background: linear-gradient(145deg, #0e2e2c, #0a2020);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative;
+  box-shadow: 0 8px 28px rgba(0,0,0,.6), 0 3px 10px rgba(0,229,204,.08), inset 0 1px 0 rgba(255,255,255,.07), inset 0 -2px 5px rgba(0,0,0,.35);
+  transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s;
+}
+.dapp:hover {
+  transform: translateY(-8px) scale(1.1);
+  box-shadow: 0 20px 44px rgba(0,0,0,.65), 0 6px 24px rgba(0,229,204,.22), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.dapp:active { transform: translateY(-2px) scale(.97); }
+.dapp .tip {
+  position: absolute; bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%);
+  background: #0e2e2c; color: #00e5cc;
+  font-size: 10px; font-weight: 700;
+  padding: 4px 10px; border-radius: 8px; white-space: nowrap;
+  pointer-events: none; opacity: 0; transition: opacity .2s;
+  box-shadow: 0 4px 14px rgba(0,0,0,.5); letter-spacing: .4px;
+}
+.dapp:hover .tip { opacity: 1; }
+.home-btn {
+  width: 50px; height: 50px; border-radius: 50%;
+  background: linear-gradient(145deg, #0e2e2c, #0a2020);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 28px rgba(0,0,0,.6), 0 0 0 2.5px rgba(0,229,204,.6), 0 3px 12px rgba(0,229,204,.15), inset 0 1px 0 rgba(255,255,255,.07);
+  transition: transform .22s, box-shadow .22s;
+}
+.home-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 42px rgba(0,0,0,.65), 0 0 0 2.5px #00e5cc, 0 6px 24px rgba(0,229,204,.3);
+}
+.home-inner { width: 17px; height: 17px; border-radius: 50%; border: 2.5px solid rgba(0,229,204,.8); box-shadow: 0 0 10px rgba(0,229,204,.4); }
+
+/* ── OVERLAYS ── */
+.overlay {
+  display: none; position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,10,10,.72); backdrop-filter: blur(10px);
+  align-items: center; justify-content: center;
+}
+.overlay.open { display: flex; }
+.panel {
+  background: linear-gradient(145deg, #0d2828, #0b2020);
+  border-radius: 22px; padding: 24px 26px; min-width: 340px; max-width: 90vw;
+  box-shadow: 0 30px 80px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.panel h3 { font-size: 15px; font-weight: 600; color: #00e5cc; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; letter-spacing: .3px; }
+.px { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; color: rgba(255,255,255,.4); transition: background .18s, color .18s; }
+.px:hover { background: rgba(0,229,204,.12); color: #00e5cc; }
+.panel ul { list-style: none; }
+.panel ul li {
+  padding: 11px 14px; border-radius: 14px; margin-bottom: 7px;
+  background: rgba(255,255,255,.04);
+  font-size: 13px; color: rgba(255,255,255,.7); cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+  transition: background .18s, transform .18s, color .18s;
+  display: flex; align-items: center; gap: 10px;
+}
+.panel ul li:hover { background: rgba(0,229,204,.09); color: #fff; transform: translateX(4px); }
+.pg { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.pg-i {
+  padding: 16px 10px; border-radius: 16px; background: rgba(255,255,255,.04);
+  cursor: pointer; text-align: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05);
+  transition: background .18s, transform .2s, box-shadow .2s;
+}
+.pg-i:hover { background: rgba(0,229,204,.09); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.4); }
+.pg-i .ic { font-size: 24px; margin-bottom: 6px; }
+.pg-i .lb { font-size: 11px; color: rgba(255,255,255,.45); font-weight: 500; letter-spacing: .3px; }
+
+/* TOAST */
+#toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-70px);
+  background: #0e2e2c; color: #00e5cc;
+  padding: 9px 22px; border-radius: 40px;
+  font-size: 12px; font-weight: 700; letter-spacing: .5px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.55), 0 2px 10px rgba(0,229,204,.2);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1); z-index: 999; pointer-events: none;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+<div id="toast"></div>
+
+<div class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-btn" onclick="openPanel('tasks')" title="Tasks">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00e5cc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+        <line x1="14" y1="5" x2="21" y2="5"/><line x1="14" y1="9" x2="21" y2="9"/>
+        <rect x="3" y="13" width="7" height="7" rx="1.5"/>
+        <line x1="14" y1="15" x2="21" y2="15"/><line x1="14" y1="19" x2="21" y2="19"/>
+      </svg>
+    </div>
+    <div class="tb-right">
+      <div class="tb-btn" onclick="openPanel('bookmarks')" title="Bookmarks">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#00e5cc"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
+      </div>
+      <div class="tb-btn" onclick="openPanel('apps')" title="All Apps">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#00e5cc">
+          <circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/>
+          <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+          <circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- CLOCK -->
+    <div class="clock-side">
+      <div class="clock-circle" onclick="openPanel('clock')">
+        <div class="cl-date" id="cl-date">20 Fri</div>
+        <div class="cl-time" id="cl-time">2:08</div>
+        <div class="cl-ampm" id="cl-ampm">PM</div>
+      </div>
+      <div>
+        <div class="greet-name">Faraby Abdulla Al Rabby</div>
+        <div class="greet-sub" id="greet-sub">Good Afternoon!</div>
+      </div>
+    </div>
+
+    <!-- WIDGETS -->
+    <div class="widgets">
+
+      <!-- Weather -->
+      <div class="weather-row">
+        <div class="card weather-card" onclick="openPanel('weather')">
+          <div class="w-label">Sunny</div>
+          <div class="hum-row">
+            <div class="hum-badge">Humidity 16%</div>
+            <div class="hum-bar"><div class="hum-fill"></div></div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#00e5cc" style="filter:drop-shadow(0 0 5px rgba(0,229,204,.5));flex-shrink:0;">
+              <path d="M12 2C12 2 5 10.5 5 15a7 7 0 0 0 14 0C19 10.5 12 2 12 2z"/>
+            </svg>
+          </div>
+          <div class="chips">
+            <div class="chip">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00e5cc" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+              Feels 31.1°C
+            </div>
+            <div class="chip accent" onclick="event.stopPropagation();openApp('https://maps.google.com/?q=Puratan+Paltan,Dhaka')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#000"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              Puratan Pa...
+            </div>
+          </div>
+        </div>
+        <div class="temp-ball card" onclick="openPanel('weather')">
+          <div class="temp-val">33<sup>°C</sup></div>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e8a020" stroke-width="1.8" stroke-linecap="round" style="filter:drop-shadow(0 0 8px rgba(232,160,32,.6))">
+            <circle cx="12" cy="12" r="5" fill="#e8a020" stroke="none"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="card search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="srch-in" id="si" type="text" placeholder="Type here..." onkeydown="if(event.key==='Enter')doSearch()" autofocus>
+        <button class="mic-btn" id="mic" onclick="startMic()" title="Voice search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round">
+            <rect x="9" y="2" width="6" height="11" rx="3"/>
+            <path d="M5 10a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+        <button class="srch-btn" onclick="doSearch()">Search</button>
+      </div>
+
+      <!-- Engines -->
+      <div class="card engines-wrap">
+        <div class="sw-txt">Search With</div>
+        <div class="eng-grid">
+
+          <div class="eng active" data-url="https://www.google.com/search?q=" onclick="setEng(this)">
+            <div class="eng-ico" style="background:#00e5cc;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round">
+                <circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="15.5" y2="15.5"/>
+              </svg>
+            </div>
+            Default <div class="dot"></div>
+          </div>
+
+          <div class="eng" data-url="https://www.google.com/search?q=" onclick="setEng(this)">
+            <div class="eng-ico" style="background:#fff;">
+              <svg width="13" height="13" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+            </div>
+            Google <div class="dot"></div>
+          </div>
+
+          <div class="eng" data-url="https://duckduckgo.com/?q=" onclick="setEng(this)">
+            <div class="eng-ico" style="background:#de5833;">
+              <svg width="12" height="12" viewBox="0 0 32 32" fill="white">
+                <ellipse cx="16" cy="17" rx="10" ry="11"/>
+                <circle cx="11" cy="13" r="2" fill="#de5833"/><circle cx="21" cy="13" r="2" fill="#de5833"/>
+                <ellipse cx="16" cy="22" rx="4" ry="2" fill="#de5833"/>
+              </svg>
+            </div>
+            Duck <div class="dot"></div>
+          </div>
+
+          <div class="eng" data-url="https://www.bing.com/search?q=" onclick="setEng(this)">
+            <div class="eng-ico" style="background:#008373;">
+              <svg width="10" height="12" viewBox="0 0 18 22" fill="white"><path d="M2 1v20l5-3 7-4-4-3 4-5-7 2V1z"/></svg>
+            </div>
+            Bing <div class="dot"></div>
+          </div>
+
+          <div class="eng" data-url="https://search.brave.com/search?q=" onclick="setEng(this)">
+            <div class="eng-ico" style="background:#1a1a1a;">
+              <svg width="11" height="12" viewBox="0 0 24 26" fill="#ff5000">
+                <path d="M12 1L2 6v8c0 6 4.5 11 10 12 5.5-1 10-6 10-12V6L12 1zm0 3.5L20 9v5c0 4.5-3.5 8.5-8 9.5C7.5 22.5 4 18.5 4 14V9l8-4.5z"/>
+              </svg>
+            </div>
+            Brave <div class="dot"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DOCK -->
+  <div class="dock">
+    <div class="ai-btn" onclick="openPanel('ai')">
+      <div class="ai-ico">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="9" height="9" rx="1.5"/><rect x="13" y="2" width="9" height="9" rx="1.5"/>
+          <rect x="2" y="13" width="9" height="9" rx="1.5"/><rect x="13" y="13" width="9" height="9" rx="1.5"/>
+        </svg>
+      </div>
+      AI Tools
+    </div>
+
+    <div class="dock-apps">
+      <div class="dapp" onclick="openApp('https://youtube.com')">
+        <div class="tip">YouTube</div>
+        <svg width="26" height="26" viewBox="0 0 24 24">
+          <path d="M21.6 7.2S21.4 5.8 20.8 5.2c-.8-.8-1.7-.8-2-.9C16.4 4.1 12 4.1 12 4.1s-4.4 0-6.8.2c-.4.1-1.3.1-2 .9-.6.6-.8 2-.8 2S2.1 8.7 2.1 10.2v1.4c0 1.5.2 3 .2 3s.2 1.4.8 2c.8.8 1.8.8 2.2.9 1.6.1 6.7.2 6.7.2s4.4 0 6.8-.3c.4-.1 1.3-.1 2-.9.6-.6.8-2 .8-2s.2-1.5.2-3v-1.4c0-1.4-.2-3-.2-3z" fill="#00e5cc" style="filter:drop-shadow(0 0 5px rgba(0,229,204,.5))"/>
+          <polygon points="10,9 10,15 16,12" fill="#061a1a"/>
+        </svg>
+      </div>
+
+      <div class="dapp" onclick="openApp('https://mail.google.com')">
+        <div class="tip">Gmail</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 0 5px rgba(0,229,204,.4))">
+          <rect x="3" y="6" width="18" height="13" rx="2" stroke="#00e5cc" stroke-width="1.8"/>
+          <polyline points="3,7 12,14 21,7" stroke="#00e5cc" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="dapp" onclick="openApp('https://web.telegram.org')">
+        <div class="tip">Telegram</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 0 5px rgba(0,229,204,.4))">
+          <path d="M22 3L2 10.8l7 2.5 2.5 7L17 15l5-12z" stroke="#00e5cc" stroke-width="1.8" stroke-linejoin="round" fill="none"/>
+          <line x1="9" y1="13" x2="14" y2="9" stroke="#00e5cc" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="dapp" onclick="openApp('https://web.whatsapp.com')">
+        <div class="tip">WhatsApp</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 0 5px rgba(0,229,204,.4))">
+          <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.05-1.34A9.93 9.93 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" stroke="#00e5cc" stroke-width="1.8" fill="none"/>
+          <path d="M9 9s0-1 1-1h1l1 2.5-1.5 1s1 2 3 3l1-1.5 2.5 1v1s-1 1-2 1C12 16 8 12 8 9z" fill="#00e5cc"/>
+        </svg>
+      </div>
+
+      <div class="dapp" onclick="openApp('https://twitter.com')">
+        <div class="tip">Twitter / X</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#00e5cc" style="filter:drop-shadow(0 0 5px rgba(0,229,204,.4))">
+          <path d="M22 5.8a8.49 8.49 0 0 1-2.36.64 4.13 4.13 0 0 0 1.81-2.27 8.21 8.21 0 0 1-2.61 1A4.1 4.1 0 0 0 8.8 8.6 11.65 11.65 0 0 1 3 5.3a4.14 4.14 0 0 0 1.27 5.49A4.09 4.09 0 0 1 2.4 10v.05a4.1 4.1 0 0 0 3.29 4.02 4.13 4.13 0 0 1-1.85.07 4.1 4.1 0 0 0 3.83 2.85A8.22 8.22 0 0 1 2 18.28a11.64 11.64 0 0 0 6.29 1.84c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.35-.01-.52A8.36 8.36 0 0 0 22 5.8z"/>
+        </svg>
+      </div>
+
+      <div class="dapp" onclick="openApp('https://discord.com/app')">
+        <div class="tip">Discord</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#00e5cc" style="filter:drop-shadow(0 0 5px rgba(0,229,204,.4))">
+          <path d="M20.32 4.37A19.79 19.79 0 0 0 15.52 3a13.7 13.7 0 0 0-.64 1.29 18.27 18.27 0 0 0-5.76 0A13.37 13.37 0 0 0 8.47 3 19.62 19.62 0 0 0 3.67 4.38C.53 9.12-.32 13.74.1 18.3a19.89 19.89 0 0 0 5.99 3A14.57 14.57 0 0 0 7.35 19a12.91 12.91 0 0 1-2.02-1 10.7 10.7 0 0 0 .49-.38 14.17 14.17 0 0 0 12.36 0 9.09 9.09 0 0 0 .49.38 12.94 12.94 0 0 1-2.02 1 14.62 14.62 0 0 0 1.26 2.3 19.84 19.84 0 0 0 6-3.06c.5-5.17-.85-9.75-3.59-13.77zM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.41s.96-2.41 2.16-2.41c1.19 0 2.18 1.09 2.16 2.41 0 1.33-.96 2.41-2.16 2.41zm7.96 0c-1.18 0-2.16-1.08-2.16-2.41s.97-2.41 2.16-2.41c1.2 0 2.17 1.09 2.16 2.41 0 1.33-.96 2.41-2.16 2.41z"/>
+        </svg>
+      </div>
+
+      <div class="dapp" onclick="openApp('https://app.grammarly.com')">
+        <div class="tip">Grammarly</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 0 5px rgba(0,229,204,.4))">
+          <circle cx="12" cy="12" r="9" stroke="#00e5cc" stroke-width="1.8"/>
+          <path d="M15 10h-4a3 3 0 0 0 0 6h4v-3h-2" stroke="#00e5cc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="home-btn" onclick="toast('🏠 Home')">
+      <div class="home-inner"></div>
+    </div>
+  </div>
+
+</div><!-- end .page -->
+
+<!-- PANELS -->
+<div class="overlay" id="ov-tasks" onclick="closeOv(event,this)">
+  <div class="panel" style="min-width:360px;">
+    <h3>📋 Tasks <span class="px" onclick="closePanel('tasks')">✕</span></h3>
+    <ul id="tl">
+      <li onclick="toggle(this)">✅ Morning workout</li>
+      <li onclick="toggle(this)">📧 Reply to emails</li>
+      <li onclick="toggle(this)">🛒 Buy groceries</li>
+    </ul>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <input id="ni" type="text" placeholder="Add task..." onkeydown="if(event.key==='Enter')addT()"
+        style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(0,229,204,.18);border-radius:12px;padding:9px 13px;color:#fff;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;">
+      <button onclick="addT()" style="background:linear-gradient(135deg,#00e5cc,#00a896);color:#000;border:none;border-radius:12px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:13px;box-shadow:0 4px 14px rgba(0,229,204,.45);">Add</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-bookmarks" onclick="closeOv(event,this)">
+  <div class="panel">
+    <h3>🔖 Bookmarks <span class="px" onclick="closePanel('bookmarks')">✕</span></h3>
+    <ul>
+      <li onclick="openApp('https://github.com')">🐙 GitHub</li>
+      <li onclick="openApp('https://stackoverflow.com')">💡 Stack Overflow</li>
+      <li onclick="openApp('https://youtube.com')">▶️ YouTube</li>
+      <li onclick="openApp('https://twitter.com')">🐦 Twitter / X</li>
+      <li onclick="openApp('https://mail.google.com')">📧 Gmail</li>
+      <li onclick="openApp('https://claude.ai')">🤖 Claude AI</li>
+    </ul>
+  </div>
+</div>
+
+<div class="overlay" id="ov-apps" onclick="closeOv(event,this)">
+  <div class="panel" style="max-width:420px;">
+    <h3>⬡ All Apps <span class="px" onclick="closePanel('apps')">✕</span></h3>
+    <div class="pg">
+      <div class="pg-i" onclick="openApp('https://youtube.com')"><div class="ic">▶️</div><div class="lb">YouTube</div></div>
+      <div class="pg-i" onclick="openApp('https://mail.google.com')"><div class="ic">📧</div><div class="lb">Gmail</div></div>
+      <div class="pg-i" onclick="openApp('https://web.telegram.org')"><div class="ic">✈️</div><div class="lb">Telegram</div></div>
+      <div class="pg-i" onclick="openApp('https://web.whatsapp.com')"><div class="ic">💬</div><div class="lb">WhatsApp</div></div>
+      <div class="pg-i" onclick="openApp('https://twitter.com')"><div class="ic">🐦</div><div class="lb">Twitter</div></div>
+      <div class="pg-i" onclick="openApp('https://discord.com/app')"><div class="ic">🎮</div><div class="lb">Discord</div></div>
+      <div class="pg-i" onclick="openApp('https://app.grammarly.com')"><div class="ic">📝</div><div class="lb">Grammarly</div></div>
+      <div class="pg-i" onclick="openApp('https://github.com')"><div class="ic">🐙</div><div class="lb">GitHub</div></div>
+      <div class="pg-i" onclick="openApp('https://claude.ai')"><div class="ic">🧠</div><div class="lb">Claude AI</div></div>
+      <div class="pg-i" onclick="openApp('https://chatgpt.com')"><div class="ic">💡</div><div class="lb">ChatGPT</div></div>
+      <div class="pg-i" onclick="openApp('https://calendar.google.com')"><div class="ic">📅</div><div class="lb">Calendar</div></div>
+      <div class="pg-i" onclick="openApp('https://drive.google.com')"><div class="ic">💾</div><div class="lb">Drive</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-clock" onclick="closeOv(event,this)">
+  <div class="panel" style="text-align:center;min-width:300px;">
+    <h3>⏰ Clock &amp; Alarm <span class="px" onclick="closePanel('clock')">✕</span></h3>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:68px;font-weight:700;color:#00e5cc;text-shadow:0 0 30px rgba(0,229,204,.5);margin:10px 0;" id="pt">2:08</div>
+    <p style="color:rgba(255,255,255,.3);font-size:11px;letter-spacing:.8px;margin-bottom:20px;">DHAKA · GMT+6</p>
+    <ul>
+      <li onclick="toast('⏰ Alarm set: 7:00 AM')">🌅 Morning Alarm — 7:00 AM</li>
+      <li onclick="toast('⏰ Reminder: 12:00 PM')">☀️ Noon Reminder — 12:00 PM</li>
+      <li onclick="toast('⏰ Alarm set: 10:00 PM')">🌙 Night Alarm — 10:00 PM</li>
+    </ul>
+  </div>
+</div>
+
+<div class="overlay" id="ov-ai" onclick="closeOv(event,this)">
+  <div class="panel">
+    <h3>🤖 AI Tools <span class="px" onclick="closePanel('ai')">✕</span></h3>
+    <ul>
+      <li onclick="openApp('https://claude.ai')">🧠 Claude AI — Anthropic</li>
+      <li onclick="openApp('https://chatgpt.com')">💡 ChatGPT — OpenAI</li>
+      <li onclick="openApp('https://gemini.google.com')">✨ Gemini — Google</li>
+      <li onclick="openApp('https://copilot.microsoft.com')">🪟 Copilot — Microsoft</li>
+      <li onclick="openApp('https://www.perplexity.ai')">🔍 Perplexity AI</li>
+      <li onclick="openApp('https://midjourney.com')">🎨 Midjourney</li>
+    </ul>
+  </div>
+</div>
+
+<div class="overlay" id="ov-weather" onclick="closeOv(event,this)">
+  <div class="panel">
+    <h3>⛅ Weather — Puratan Pa <span class="px" onclick="closePanel('weather')">✕</span></h3>
+    <div style="text-align:center;margin:10px 0 20px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:64px;font-weight:700;color:#00e5cc;text-shadow:0 0 30px rgba(0,229,204,.5);">33°C</div>
+      <p style="color:rgba(255,255,255,.4);font-size:14px;margin-top:4px;">☀️ Sunny · Feels like 31.1°C</p>
+    </div>
+    <ul>
+      <li>💧 Humidity: 16%</li>
+      <li>💨 Wind: 12 km/h NW</li>
+      <li>👁️ Visibility: 10 km</li>
+      <li>🌅 Sunrise 6:22 AM · 🌇 Sunset 5:58 PM</li>
+      <li onclick="openApp('https://weather.google.com')">🌐 Open Full Forecast →</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function tick(){
+  const n=new Date();
+  document.getElementById('cl-date').textContent=`${n.getDate()} ${DAYS[n.getDay()]}`;
+  let h=n.getHours(),m=n.getMinutes(),ap=h>=12?'PM':'AM';
+  h=h%12||12;
+  const ts=`${h}:${String(m).padStart(2,'0')}`;
+  document.getElementById('cl-time').textContent=ts;
+  document.getElementById('cl-ampm').textContent=ap;
+  const p=document.getElementById('pt'); if(p)p.textContent=ts;
+  const hr=n.getHours();
+  document.getElementById('greet-sub').textContent=
+    hr<5?'Good Night!':hr<12?'Good Morning!':hr<17?'Good Afternoon!':'Good Evening!';
+}
+tick(); setInterval(tick,1000);
+
+let eng='https://www.google.com/search?q=';
+function setEng(el){
+  document.querySelectorAll('.eng').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active'); eng=el.dataset.url;
+  toast('Engine → '+el.textContent.trim().replace(/[●○]/g,'').trim());
+}
+function doSearch(){
+  const q=document.getElementById('si').value.trim();
+  if(!q){toast('⚠️ Type something first!');return;}
+  window.location.href=eng+encodeURIComponent(q);
+}
+function startMic(){
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){toast('🎤 Not supported');return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const r=new SR(); r.lang='en-US'; r.interimResults=false;
+  const b=document.getElementById('mic'); b.classList.add('on'); toast('🎤 Listening...');
+  r.onresult=e=>{const t=e.results[0][0].transcript;document.getElementById('si').value=t;b.classList.remove('on');toast('✅ '+t);};
+  r.onerror=()=>{b.classList.remove('on');toast('❌ Mic error');};
+  r.onend=()=>b.classList.remove('on');
+  r.start();
+}
+function openApp(u){ window.open(u,'_blank'); }
+function openPanel(id){ document.getElementById('ov-'+id).classList.add('open'); }
+function closePanel(id){ document.getElementById('ov-'+id).classList.remove('open'); }
+function closeOv(e,el){ if(e.target===el) el.classList.remove('open'); }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
+  if(e.key==='Enter'&&document.activeElement===document.getElementById('si')) doSearch();
+});
+function addT(){
+  const i=document.getElementById('ni'),v=i.value.trim(); if(!v)return;
+  const li=document.createElement('li'); li.textContent='📌 '+v;
+  li.onclick=()=>toggle(li);
+  document.getElementById('tl').appendChild(li); i.value='';
+}
+function toggle(li){
+  const d=li.style.opacity==='0.4';
+  li.style.opacity=d?'1':'0.4';
+  li.style.textDecoration=d?'none':'line-through';
+}
+let tt;
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2600);
+}
+</script>
+</body>
+</html>
