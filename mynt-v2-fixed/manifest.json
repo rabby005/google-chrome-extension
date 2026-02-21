@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Material You New Tab",
+  "version": "2.0.0",
+  "description": "Beautiful Material You New Tab with Google Apps, AI Tools & Bookmarks.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": ["storage"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

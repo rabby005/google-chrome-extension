@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Tab</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;700&family=Google+Sans+Display:wght@300;400&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+<style>
+:root {
+  --p: #6750A4; --op: #fff; --pc: #EADDFF; --opc: #21005D;
+  --sc: #E8DEF8; --sv: #E7E0EC; --os: #1C1B1F; --osv: #49454F;
+  --s: #FFFBFE; --bg: #FFFBFE; --ov: #CAC4D0; --out: #79747E;
+  --sh: rgba(0,0,0,0.12); --scrim: rgba(0,0,0,0.35);
+}
+.dark {
+  --p: #D0BCFF; --op: #381E72; --pc: #4F378B; --opc: #EADDFF;
+  --sc: #4A4458; --sv: #49454F; --os: #E6E1E5; --osv: #CAC4D0;
+  --s: #1C1B1F; --bg: #1C1B1F; --ov: #49454F; --out: #938F99;
+  --sh: rgba(0,0,0,0.4);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Google Sans',sans-serif; background:var(--bg); color:var(--os); min-height:100vh; overflow-x:hidden; transition:background .3s,color .3s; }
+
+/* Wallpaper */
+#wbg { position:fixed; inset:0; z-index:-1; background-size:cover; background-position:center; }
+body.wp #wbg { filter:brightness(.7); }
+body.wp .card, body.wp .bm-card { background:rgba(10,8,16,.65)!important; backdrop-filter:blur(20px)!important; border-color:rgba(255,255,255,.1)!important; color:#fff!important; }
+body.wp .card *, body.wp .bm-card * { color:#fff!important; }
+body.wp .sb { background:rgba(255,255,255,.15)!important; color:#fff!important; border-color:rgba(255,255,255,.3)!important; }
+body.wp .sb::placeholder { color:rgba(255,255,255,.5)!important; }
+body.wp #clock, body.wp #date-disp, body.wp .greet-name, body.wp .greet-sub { color:#fff!important; text-shadow:0 2px 8px rgba(0,0,0,.5); }
+body.wp .app-item:hover { background:rgba(255,255,255,.15)!important; }
+body.wp .app-lbl { color:rgba(255,255,255,.85)!important; }
+body.wp .sec-tab, body.wp .tab-btn { border-color:rgba(255,255,255,.2)!important; }
+body.wp .tab-btn { color:rgba(255,255,255,.65)!important; }
+body.wp .tab-btn.on { color:#D0BCFF!important; border-bottom-color:#D0BCFF!important; }
+body.wp .sec-hd { color:rgba(255,255,255,.45)!important; }
+body.wp .bm-chip { border-color:rgba(255,255,255,.25)!important; color:rgba(255,255,255,.7)!important; }
+body.wp .bm-chip.on { background:rgba(208,188,255,.25)!important; }
+
+/* Layout */
+.page { max-width:1100px; margin:0 auto; padding:28px 20px 80px; display:flex; flex-direction:column; gap:18px; }
+
+/* Topbar */
+.topbar { display:flex; justify-content:space-between; align-items:center; }
+.greet-name { font-family:'Google Sans Display',sans-serif; font-size:clamp(18px,3vw,28px); font-weight:400; }
+.greet-sub { font-size:13px; color:var(--osv); margin-top:2px; }
+.tbr { display:flex; gap:6px; }
+.ibtn { width:40px; height:40px; border-radius:50%; border:none; background:transparent; color:var(--osv); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; flex-shrink:0; }
+.ibtn:hover { background:var(--sv); }
+.ibtn span { font-size:22px; }
+
+/* Clock */
+.clock-sec { text-align:center; }
+#clock { font-family:'Google Sans Display',sans-serif; font-size:clamp(50px,11vw,88px); font-weight:300; letter-spacing:-2px; line-height:1; }
+#date-disp { font-size:15px; color:var(--osv); margin-top:6px; }
+#analog-clk { display:none; margin:0 auto; width:148px; height:148px; }
+#analog-clk svg { width:100%; height:100%; }
+
+/* Search */
+.srch-wrap { position:relative; max-width:600px; margin:0 auto; width:100%; }
+.sb { width:100%; height:54px; border-radius:27px; border:1.5px solid var(--ov); background:var(--sv); padding:0 116px 0 52px; font-family:'Google Sans',sans-serif; font-size:16px; color:var(--os); outline:none; transition:all .2s; box-shadow:0 1px 4px var(--sh); }
+.sb:focus { border-color:var(--p); background:var(--s); box-shadow:0 3px 12px var(--sh); }
+.si { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--osv); font-size:22px; pointer-events:none; }
+.eng-wrap { position:absolute; right:8px; top:50%; transform:translateY(-50%); }
+.eng-btn { height:38px; padding:0 14px; border-radius:19px; border:none; background:var(--pc); color:var(--opc); font-family:'Google Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap; }
+.eng-dd { position:absolute; top:calc(100% + 8px); right:0; background:var(--s); border:1px solid var(--ov); border-radius:16px; overflow:hidden; box-shadow:0 4px 20px var(--sh); z-index:99; display:none; min-width:160px; }
+.eng-dd.show { display:block; }
+.eng-opt { padding:11px 16px; cursor:pointer; font-size:14px; display:flex; align-items:center; gap:8px; transition:background .15s; white-space:nowrap; }
+.eng-opt:hover { background:var(--sv); }
+.eng-opt.on { color:var(--p); font-weight:500; }
+
+/* Tabs */
+.sec-tab { display:flex; gap:4px; border-bottom:1.5px solid var(--ov); }
+.tab-btn { padding:10px 18px; border:none; border-bottom:3px solid transparent; margin-bottom:-1.5px; background:transparent; font-family:'Google Sans',sans-serif; font-size:14px; font-weight:500; color:var(--osv); cursor:pointer; border-radius:8px 8px 0 0; transition:all .2s; white-space:nowrap; }
+.tab-btn:hover { background:var(--sv); color:var(--os); }
+.tab-btn.on { color:var(--p); border-bottom-color:var(--p); }
+.tab-pnl { display:none; }
+.tab-pnl.show { display:block; }
+
+/* App grid */
+.sec-hd { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1.2px; color:var(--osv); margin:18px 0 8px; }
+.app-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(80px,1fr)); gap:4px; }
+.app-item { display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px 4px; border-radius:16px; text-decoration:none; cursor:pointer; transition:background .2s,transform .15s; }
+.app-item:hover { background:var(--sv); transform:translateY(-2px); }
+.app-ico { width:50px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; transition:transform .2s; }
+.app-item:hover .app-ico { transform:scale(1.1); }
+.app-lbl { font-size:11px; color:var(--osv); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:76px; }
+
+/* Cards */
+.cards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:8px; }
+.card { background:var(--s); border-radius:24px; padding:20px; border:1px solid var(--ov); box-shadow:0 1px 4px var(--sh); transition:all .3s; }
+.card:hover { box-shadow:0 4px 16px var(--sh); transform:translateY(-2px); }
+.card-ttl { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--osv); margin-bottom:14px; }
+
+/* Weather */
+.wx-card { background:linear-gradient(135deg,var(--pc),#FFD8E4)!important; border-color:transparent!important; }
+.wx-main { display:flex; align-items:center; gap:16px; }
+.wx-ico { font-size:50px; line-height:1; }
+.wx-temp { font-size:38px; font-weight:300; color:var(--opc); line-height:1; }
+.wx-desc { font-size:13px; color:var(--opc); margin-top:4px; text-transform:capitalize; }
+.wx-city { font-size:11px; color:var(--opc); opacity:.8; margin-top:2px; }
+.wx-dets { display:flex; gap:14px; margin-top:12px; }
+.wx-det { display:flex; align-items:center; gap:4px; font-size:12px; color:var(--opc); }
+.wx-det span { font-size:14px; }
+.wx-setup { display:flex; flex-direction:column; align-items:center; gap:10px; padding:16px; text-align:center; color:var(--osv); }
+.wx-setup span { font-size:36px; color:var(--p); }
+
+/* Todo */
+.todo-row { display:flex; gap:8px; margin-bottom:12px; }
+.todo-in { flex:1; height:40px; border-radius:12px; border:1px solid var(--ov); background:var(--sv); padding:0 12px; font-family:'Google Sans',sans-serif; font-size:14px; color:var(--os); outline:none; }
+.todo-in:focus { border-color:var(--p); }
+.add-btn { width:40px; height:40px; border-radius:50%; border:none; background:var(--p); color:var(--op); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; }
+.add-btn:hover { filter:brightness(1.1); transform:scale(1.05); }
+.todo-list { list-style:none; display:flex; flex-direction:column; gap:5px; max-height:200px; overflow-y:auto; }
+.todo-li { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:12px; background:var(--sv); }
+.todo-cb { width:20px; height:20px; border-radius:50%; border:2px solid var(--out); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.todo-cb.done { background:var(--p); border-color:var(--p); }
+.todo-cb.done::after { content:'✓'; color:#fff; font-size:11px; }
+.todo-txt { flex:1; font-size:14px; }
+.todo-txt.done { text-decoration:line-through; color:var(--osv); }
+.todo-del { background:none; border:none; cursor:pointer; color:var(--osv); opacity:0; padding:2px; transition:opacity .2s; }
+.todo-li:hover .todo-del { opacity:1; }
+
+/* Bookmarks */
+.bm-bar { display:flex; align-items:center; gap:10px; margin-bottom:16px; margin-top:8px; flex-wrap:wrap; }
+.bm-chips { display:flex; gap:6px; flex-wrap:wrap; flex:1; }
+.bm-chip { padding:6px 14px; border-radius:20px; border:1px solid var(--ov); background:transparent; font-family:'Google Sans',sans-serif; font-size:13px; color:var(--osv); cursor:pointer; transition:all .2s; white-space:nowrap; }
+.bm-chip:hover { background:var(--sv); }
+.bm-chip.on { background:var(--pc); color:var(--opc); border-color:transparent; font-weight:500; }
+.bm-addbtn { height:36px; padding:0 14px; border-radius:18px; border:none; background:var(--p); color:var(--op); font-family:'Google Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:5px; flex-shrink:0; }
+.bm-addbtn:hover { filter:brightness(1.1); }
+.bm-newfld { height:36px; padding:0 12px; border-radius:18px; border:1px dashed var(--out); background:transparent; color:var(--osv); font-family:'Google Sans',sans-serif; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:5px; flex-shrink:0; transition:all .2s; }
+.bm-newfld:hover { background:var(--sv); color:var(--os); }
+.bm-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:10px; }
+.bm-card { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:16px; background:var(--s); border:1px solid var(--ov); text-decoration:none; transition:all .2s; position:relative; }
+.bm-card:hover { background:var(--sv); transform:translateY(-2px); box-shadow:0 3px 12px var(--sh); }
+.bm-fav { width:36px; height:36px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; color:#fff; }
+.bm-info { flex:1; overflow:hidden; }
+.bm-ttl { font-size:13px; font-weight:500; color:var(--os); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bm-url { font-size:11px; color:var(--osv); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+.bm-del { position:absolute; top:6px; right:6px; width:22px; height:22px; border-radius:50%; border:none; background:var(--sv); color:var(--osv); cursor:pointer; display:none; align-items:center; justify-content:center; font-size:12px; }
+.bm-card:hover .bm-del { display:flex; }
+.bm-del:hover { background:#B3261E; color:#fff; }
+.bm-empty { display:flex; flex-direction:column; align-items:center; gap:12px; padding:40px 20px; color:var(--osv); text-align:center; grid-column:1/-1; }
+.bm-empty span { font-size:48px; color:var(--p); opacity:.4; }
+
+/* Settings */
+.s-overlay { position:fixed; inset:0; background:var(--scrim); z-index:100; opacity:0; pointer-events:none; transition:opacity .3s; }
+.s-overlay.show { opacity:1; pointer-events:all; }
+.s-panel { position:fixed; right:0; top:0; bottom:0; width:320px; background:var(--s); z-index:101; padding:24px; transform:translateX(100%); transition:transform .35s cubic-bezier(.4,0,.2,1); overflow-y:auto; display:flex; flex-direction:column; gap:18px; }
+.s-panel.show { transform:translateX(0); }
+.s-hdr { display:flex; align-items:center; justify-content:space-between; }
+.s-ttl { font-size:18px; font-weight:500; }
+.s-grp label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--osv); display:block; margin-bottom:8px; }
+.s-in { width:100%; height:40px; border-radius:12px; border:1px solid var(--ov); background:var(--sv); padding:0 12px; font-family:'Google Sans',sans-serif; font-size:14px; color:var(--os); outline:none; }
+.s-in:focus { border-color:var(--p); }
+.swatches { display:flex; gap:8px; flex-wrap:wrap; }
+.sw { width:36px; height:36px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:all .2s; }
+.sw:hover { transform:scale(1.15); }
+.sw.on { border-color:var(--os); }
+.tog-row { display:flex; align-items:center; justify-content:space-between; padding:4px 0; }
+.tog-lbl { font-size:14px; }
+.tog { width:48px; height:28px; border-radius:14px; background:var(--sv); border:2px solid var(--out); position:relative; cursor:pointer; transition:background .2s,border-color .2s; }
+.tog.on { background:var(--p); border-color:var(--p); }
+.tog::after { content:''; width:20px; height:20px; border-radius:50%; background:var(--out); position:absolute; top:2px; left:2px; transition:transform .2s,background .2s; }
+.tog.on::after { transform:translateX(20px); background:var(--op); }
+.act-btn { width:100%; height:40px; border-radius:12px; border:1px solid var(--ov); background:var(--sc); color:var(--os); font-family:'Google Sans',sans-serif; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:6px; transition:filter .2s; }
+.act-btn:hover { filter:brightness(.95); }
+
+/* FAB */
+.fab { position:fixed; bottom:24px; right:24px; width:56px; height:56px; border-radius:16px; border:none; background:var(--pc); color:var(--opc); cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 12px var(--sh); transition:all .2s; z-index:10; }
+.fab:hover { transform:scale(1.05); box-shadow:0 6px 20px var(--sh); }
+.fab span { font-size:24px; }
+
+/* Modal */
+.modal-bg { position:fixed; inset:0; background:var(--scrim); z-index:200; opacity:0; pointer-events:none; transition:opacity .25s; display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal-bg.show { opacity:1; pointer-events:all; }
+.modal { background:var(--s); border-radius:28px; padding:28px; width:100%; max-width:380px; box-shadow:0 8px 32px var(--sh); transform:scale(.92); transition:transform .25s cubic-bezier(.4,0,.2,1); }
+.modal-bg.show .modal { transform:scale(1); }
+.modal-ttl { font-size:18px; font-weight:500; margin-bottom:20px; }
+.m-fld { margin-bottom:14px; }
+.m-fld label { font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:var(--osv); display:block; margin-bottom:6px; }
+.m-in { width:100%; height:44px; border-radius:12px; border:1px solid var(--ov); background:var(--sv); padding:0 14px; font-family:'Google Sans',sans-serif; font-size:14px; color:var(--os); outline:none; }
+.m-in:focus { border-color:var(--p); }
+.m-sel { width:100%; height:44px; border-radius:12px; border:1px solid var(--ov); background:var(--sv); padding:0 14px; font-family:'Google Sans',sans-serif; font-size:14px; color:var(--os); outline:none; cursor:pointer; }
+.m-acts { display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
+.m-cancel { padding:10px 20px; border-radius:12px; border:none; background:var(--sv); color:var(--os); font-family:'Google Sans',sans-serif; font-size:14px; cursor:pointer; }
+.m-save { padding:10px 20px; border-radius:12px; border:none; background:var(--p); color:var(--op); font-family:'Google Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; }
+
+/* Snackbar */
+.snack { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--os); color:var(--s); padding:12px 20px; border-radius:12px; font-size:14px; z-index:300; transition:transform .3s; white-space:nowrap; }
+.snack.show { transform:translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.app-item, .bm-card { animation:fadeUp .35s ease both; }
+
+@media(max-width:600px) { .page{padding:16px 12px 70px;gap:14px} .s-panel{width:100%} .app-grid{grid-template-columns:repeat(auto-fill,minmax(68px,1fr))} }
+</style>
+</head>
+<body>
+<div id="wbg"></div>
+
+<div class="page">
+
+<!-- Topbar -->
+<div class="topbar">
+  <div>
+    <div class="greet-name" id="greet-name">Good Morning! ☀️</div>
+    <div class="greet-sub" id="greet-sub">Welcome back</div>
+  </div>
+  <div class="tbr">
+    <button class="ibtn" id="btn-clock" title="Toggle clock"><span class="material-symbols-rounded">schedule</span></button>
+    <button class="ibtn" id="btn-dark" title="Dark mode"><span class="material-symbols-rounded">dark_mode</span></button>
+    <button class="ibtn" id="btn-settings" title="Settings"><span class="material-symbols-rounded">settings</span></button>
+  </div>
+</div>
+
+<!-- Clock -->
+<div class="clock-sec">
+  <div id="clock">00:00</div>
+  <div id="analog-clk">
+    <svg viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="95" fill="var(--pc)" stroke="var(--ov)" stroke-width="2"/>
+      <g id="hmarks"></g>
+      <line id="hh" x1="100" y1="100" x2="100" y2="58" stroke="var(--os)" stroke-width="5" stroke-linecap="round"/>
+      <line id="mh" x1="100" y1="100" x2="100" y2="38" stroke="var(--os)" stroke-width="3" stroke-linecap="round"/>
+      <line id="sh" x1="100" y1="112" x2="100" y2="32" stroke="var(--p)" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="100" cy="100" r="5" fill="var(--p)"/>
+    </svg>
+  </div>
+  <div id="date-disp"></div>
+</div>
+
+<!-- Search -->
+<div class="srch-wrap">
+  <span class="material-symbols-rounded si">search</span>
+  <input type="text" class="sb" id="srch" placeholder="Search the web…" autocomplete="off">
+  <div class="eng-wrap">
+    <button class="eng-btn" id="eng-btn">Google</button>
+    <div class="eng-dd" id="eng-dd">
+      <div class="eng-opt on" data-name="Google" data-url="https://google.com/search?q=">🔵 Google</div>
+      <div class="eng-opt" data-name="DuckDuckGo" data-url="https://duckduckgo.com/?q=">🦆 DuckDuckGo</div>
+      <div class="eng-opt" data-name="Bing" data-url="https://bing.com/search?q=">🔷 Bing</div>
+      <div class="eng-opt" data-name="Brave" data-url="https://search.brave.com/search?q=">🦁 Brave</div>
+      <div class="eng-opt" data-name="YouTube" data-url="https://youtube.com/results?search_query=">▶️ YouTube</div>
+      <div class="eng-opt" data-name="Perplexity" data-url="https://perplexity.ai/search?q=">⚡ Perplexity</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="sec-tab">
+  <button class="tab-btn on" data-tab="google">🔷 Google Apps</button>
+  <button class="tab-btn" data-tab="ai">🤖 AI Tools</button>
+  <button class="tab-btn" data-tab="bookmarks">🔖 Bookmarks</button>
+  <button class="tab-btn" data-tab="dash">📊 Dashboard</button>
+</div>
+
+<!-- Google Apps -->
+<div class="tab-pnl show" id="tab-google">
+  <div class="sec-hd">Communication</div>
+  <div class="app-grid" id="g-comm"></div>
+  <div class="sec-hd">Productivity & Office</div>
+  <div class="app-grid" id="g-prod"></div>
+  <div class="sec-hd">Media & Entertainment</div>
+  <div class="app-grid" id="g-media"></div>
+  <div class="sec-hd">Cloud & Developer</div>
+  <div class="app-grid" id="g-cloud"></div>
+  <div class="sec-hd">Maps, Search & More</div>
+  <div class="app-grid" id="g-more"></div>
+</div>
+
+<!-- AI Tools -->
+<div class="tab-pnl" id="tab-ai">
+  <div class="sec-hd">Conversational AI</div>
+  <div class="app-grid" id="ai-chat"></div>
+  <div class="sec-hd">Image & Art AI</div>
+  <div class="app-grid" id="ai-img"></div>
+  <div class="sec-hd">Video & Audio AI</div>
+  <div class="app-grid" id="ai-vid"></div>
+  <div class="sec-hd">Writing AI</div>
+  <div class="app-grid" id="ai-write"></div>
+  <div class="sec-hd">Code & Dev AI</div>
+  <div class="app-grid" id="ai-code"></div>
+  <div class="sec-hd">Search & Research AI</div>
+  <div class="app-grid" id="ai-srch"></div>
+</div>
+
+<!-- Bookmarks -->
+<div class="tab-pnl" id="tab-bookmarks">
+  <div class="bm-bar">
+    <div class="bm-chips" id="bm-chips"></div>
+    <button class="bm-newfld" id="bm-new-folder"><span class="material-symbols-rounded" style="font-size:16px">create_new_folder</span> New Folder</button>
+    <button class="bm-addbtn" id="bm-add"><span class="material-symbols-rounded" style="font-size:16px">bookmark_add</span> Add</button>
+  </div>
+  <div class="bm-grid" id="bm-grid"></div>
+</div>
+
+<!-- Dashboard -->
+<div class="tab-pnl" id="tab-dash">
+  <div class="cards-grid">
+    <div class="card wx-card">
+      <div class="card-ttl">Weather</div>
+      <div id="wx-content">
+        <div class="wx-setup"><span class="material-symbols-rounded">partly_cloudy_day</span><p style="font-size:13px">Set your city in settings</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-ttl">To-Do List</div>
+      <div class="todo-row">
+        <input type="text" class="todo-in" id="todo-in" placeholder="Add a task…">
+        <button class="add-btn" id="todo-add"><span class="material-symbols-rounded">add</span></button>
+      </div>
+      <ul class="todo-list" id="todo-list"></ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<button class="fab" id="fab"><span class="material-symbols-rounded">palette</span></button>
+
+<!-- Settings -->
+<div class="s-overlay" id="s-overlay"></div>
+<div class="s-panel" id="s-panel">
+  <div class="s-hdr">
+    <div class="s-ttl">Customize</div>
+    <button class="ibtn" id="s-close"><span class="material-symbols-rounded">close</span></button>
+  </div>
+  <div class="s-grp">
+    <label>Your Name</label>
+    <input type="text" class="s-in" id="s-name" placeholder="Your name">
+  </div>
+  <div class="s-grp">
+    <label>Color Theme</label>
+    <div class="swatches">
+      <div class="sw on" style="background:#6750A4" data-i="0"></div>
+      <div class="sw" style="background:#006874" data-i="1"></div>
+      <div class="sw" style="background:#B3261E" data-i="2"></div>
+      <div class="sw" style="background:#386A1F" data-i="3"></div>
+      <div class="sw" style="background:#7B5800" data-i="4"></div>
+      <div class="sw" style="background:#005CBB" data-i="5"></div>
+    </div>
+  </div>
+  <div class="s-grp">
+    <label>Appearance</label>
+    <div class="tog-row"><span class="tog-lbl">Dark Mode</span><div class="tog" id="tog-dark"></div></div>
+    <div class="tog-row" style="margin-top:8px"><span class="tog-lbl">Analog Clock</span><div class="tog" id="tog-analog"></div></div>
+  </div>
+  <div class="s-grp">
+    <label>Weather City</label>
+    <input type="text" class="s-in" id="s-city" placeholder="e.g. Dhaka, BD">
+    <button class="act-btn" id="s-city-save"><span class="material-symbols-rounded">check</span> Save City</button>
+  </div>
+  <div class="s-grp">
+    <label>Wallpaper</label>
+    <button class="act-btn" id="s-wp-upload"><span class="material-symbols-rounded">upload</span> Upload Image</button>
+    <input type="file" id="wp-file" accept="image/*" style="display:none">
+    <button class="act-btn" id="s-wp-clear"><span class="material-symbols-rounded">delete</span> Remove Wallpaper</button>
+  </div>
+</div>
+
+<!-- Bookmark Modal -->
+<div class="modal-bg" id="bm-modal">
+  <div class="modal">
+    <div class="modal-ttl" id="bm-modal-ttl">Add Bookmark</div>
+    <div class="m-fld"><label>Title</label><input type="text" class="m-in" id="bm-m-title" placeholder="My Website"></div>
+    <div class="m-fld"><label>URL</label><input type="text" class="m-in" id="bm-m-url" placeholder="https://example.com"></div>
+    <div class="m-fld"><label>Folder</label><select class="m-sel" id="bm-m-folder"></select></div>
+    <div class="m-acts">
+      <button class="m-cancel" id="bm-m-cancel">Cancel</button>
+      <button class="m-save" id="bm-m-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Folder Modal -->
+<div class="modal-bg" id="fld-modal">
+  <div class="modal">
+    <div class="modal-ttl">New Folder</div>
+    <div class="m-fld"><label>Folder Name</label><input type="text" class="m-in" id="fld-m-name" placeholder="e.g. Work, Social…"></div>
+    <div class="m-acts">
+      <button class="m-cancel" id="fld-m-cancel">Cancel</button>
+      <button class="m-save" id="fld-m-save">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="snack" id="snack"></div>
+
+<script src="newtab.js"></script>
+</body>
+</html>
