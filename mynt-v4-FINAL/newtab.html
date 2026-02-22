@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;700&family=Google+Sans+Display:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6750A4;--op:#fff;--pc:#EADDFF;--opc:#21005D;--sc:#E8DEF8;--sv:#E7E0EC;--os:#1C1B1F;--osv:#49454F;--s:#FFFBFE;--bg:#FFFBFE;--ov:#CAC4D0;--out:#79747E;--sh:rgba(0,0,0,.10);--scrim:rgba(0,0,0,.35);}
+.dark{--p:#D0BCFF;--op:#381E72;--pc:#4F378B;--opc:#EADDFF;--sc:#4A4458;--sv:#2C2B30;--os:#E6E1E5;--osv:#CAC4D0;--s:#1C1B1F;--bg:#141218;--ov:#49454F;--out:#938F99;--sh:rgba(0,0,0,.35);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Google Sans',system-ui,sans-serif;background:var(--bg);color:var(--os);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}
+#wbg{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center;}
+body.wp #wbg{filter:brightness(.65);}
+body.wp .card,body.wp .bm-card{background:rgba(10,8,20,.6)!important;backdrop-filter:blur(18px)!important;border-color:rgba(255,255,255,.12)!important;}
+body.wp .card *{color:#fff!important;}body.wp .bm-ttl{color:#fff!important;}body.wp .bm-url{color:rgba(255,255,255,.6)!important;}
+body.wp .sb{background:rgba(255,255,255,.15)!important;color:#fff!important;border-color:rgba(255,255,255,.3)!important;}
+body.wp .sb::placeholder{color:rgba(255,255,255,.5)!important;}
+body.wp #clock,body.wp #date-d,body.wp #greet-n,body.wp #greet-s{color:#fff!important;text-shadow:0 2px 10px rgba(0,0,0,.6);}
+body.wp .app-lbl{color:rgba(255,255,255,.85)!important;}body.wp .app-item:hover{background:rgba(255,255,255,.15)!important;}
+body.wp .stab{border-bottom-color:rgba(255,255,255,.2)!important;}
+body.wp .tbtn{color:rgba(255,255,255,.6)!important;}body.wp .tbtn.on{color:#D0BCFF!important;border-bottom-color:#D0BCFF!important;}
+body.wp .shd{color:rgba(255,255,255,.4)!important;}
+body.wp .bm-chip{border-color:rgba(255,255,255,.2)!important;color:rgba(255,255,255,.7)!important;}
+body.wp .bm-chip.on{background:rgba(208,188,255,.25)!important;color:#D0BCFF!important;}
+.page{max-width:1200px;margin:0 auto;padding:28px 20px 80px;display:flex;flex-direction:column;gap:18px;}
+.topbar{display:flex;justify-content:space-between;align-items:center;}
+#greet-n{font-family:'Google Sans Display',sans-serif;font-size:clamp(18px,3vw,28px);font-weight:400;}
+#greet-s{font-size:13px;color:var(--osv);margin-top:2px;}
+.tbr{display:flex;gap:6px;}
+.ibtn{width:40px;height:40px;border-radius:50%;border:none;background:transparent;color:var(--osv);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;font-size:20px;}
+.ibtn:hover{background:var(--sv);}
+.clk-sec{text-align:center;}
+#clock{font-family:'Google Sans Display',sans-serif;font-size:clamp(50px,11vw,88px);font-weight:300;letter-spacing:-2px;line-height:1;}
+#date-d{font-size:15px;color:var(--osv);margin-top:6px;}
+#aclk{display:none;margin:0 auto;width:148px;height:148px;}
+#aclk svg{width:100%;height:100%;}
+.srch-wrap{position:relative;max-width:620px;margin:0 auto;width:100%;}
+.sb{width:100%;height:54px;border-radius:27px;border:1.5px solid var(--ov);background:var(--sv);padding:0 116px 0 52px;font-family:'Google Sans',sans-serif;font-size:16px;color:var(--os);outline:none;transition:all .2s;box-shadow:0 1px 6px var(--sh);}
+.sb:focus{border-color:var(--p);background:var(--s);box-shadow:0 3px 14px var(--sh);}
+.si{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--osv);font-size:20px;pointer-events:none;}
+.ew{position:absolute;right:8px;top:50%;transform:translateY(-50%);}
+.ebtn{height:38px;padding:0 14px;border-radius:19px;border:none;background:var(--pc);color:var(--opc);font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;}
+.edd{position:absolute;top:calc(100% + 8px);right:0;background:var(--s);border:1px solid var(--ov);border-radius:16px;overflow:hidden;box-shadow:0 4px 20px var(--sh);z-index:99;display:none;min-width:165px;}
+.edd.show{display:block;}
+.eopt{padding:11px 16px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;transition:background .15s;white-space:nowrap;}
+.eopt:hover{background:var(--sv);}
+.eopt.on{color:var(--p);font-weight:500;}
+.stab{display:flex;gap:4px;border-bottom:1.5px solid var(--ov);overflow-x:auto;}
+.stab::-webkit-scrollbar{display:none;}
+.tbtn{padding:10px 16px;border:none;border-bottom:3px solid transparent;margin-bottom:-1.5px;background:transparent;font-family:'Google Sans',sans-serif;font-size:14px;font-weight:500;color:var(--osv);cursor:pointer;border-radius:8px 8px 0 0;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.tbtn:hover{background:var(--sv);color:var(--os);}
+.tbtn.on{color:var(--p);border-bottom-color:var(--p);}
+.tpnl{display:none;}
+.tpnl.show{display:block;}
+.shd{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--osv);margin:18px 0 8px;}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:2px;}
+.app-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:16px;text-decoration:none;cursor:pointer;transition:background .2s,transform .15s;}
+.app-item:hover{background:var(--sv);transform:translateY(-2px);}
+.app-ico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;transition:transform .2s;}
+.app-item:hover .app-ico{transform:scale(1.1);}
+.app-ico img{width:100%;height:100%;object-fit:contain;border-radius:10px;}
+.app-ico.fb{font-size:22px;font-weight:700;color:#fff;}
+.app-lbl{font-size:11px;color:var(--osv);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:74px;}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:8px;}
+.card{background:var(--s);border-radius:24px;padding:20px;border:1px solid var(--ov);box-shadow:0 1px 4px var(--sh);transition:all .3s;}
+.card:hover{box-shadow:0 4px 16px var(--sh);transform:translateY(-2px);}
+.cttl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--osv);margin-bottom:14px;}
+.wx-card{background:linear-gradient(135deg,var(--pc),#FFD8E4)!important;border-color:transparent!important;}
+.wx-main{display:flex;align-items:center;gap:16px;}
+.wx-ico{font-size:50px;line-height:1;}
+.wx-temp{font-size:38px;font-weight:300;color:var(--opc);line-height:1;}
+.wx-desc{font-size:13px;color:var(--opc);margin-top:4px;text-transform:capitalize;}
+.wx-city{font-size:11px;color:var(--opc);opacity:.8;margin-top:2px;}
+.wx-dets{display:flex;gap:14px;margin-top:12px;}
+.wx-det{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--opc);}
+.wx-setup{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px;text-align:center;color:var(--osv);}
+.trow{display:flex;gap:8px;margin-bottom:12px;}
+.tin{flex:1;height:40px;border-radius:12px;border:1px solid var(--ov);background:var(--sv);padding:0 12px;font-family:'Google Sans',sans-serif;font-size:14px;color:var(--os);outline:none;}
+.tin:focus{border-color:var(--p);}
+.abtn{width:40px;height:40px;border-radius:50%;border:none;background:var(--p);color:var(--op);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;transition:all .2s;}
+.abtn:hover{filter:brightness(1.1);transform:scale(1.05);}
+.tlist{list-style:none;display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto;}
+.tli{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--sv);}
+.tcb{width:20px;height:20px;border-radius:50%;border:2px solid var(--out);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:11px;}
+.tcb.done{background:var(--p);border-color:var(--p);color:#fff;}
+.ttxt{flex:1;font-size:14px;}
+.ttxt.done{text-decoration:line-through;color:var(--osv);}
+.tdel{background:none;border:none;cursor:pointer;color:var(--osv);opacity:0;font-size:16px;transition:opacity .2s;}
+.tli:hover .tdel{opacity:1;}
+.bm-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:8px;flex-wrap:wrap;}
+.bm-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.bm-chip{padding:6px 14px;border-radius:20px;border:1px solid var(--ov);background:transparent;font-family:'Google Sans',sans-serif;font-size:13px;color:var(--osv);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.bm-chip:hover{background:var(--sv);}
+.bm-chip.on{background:var(--pc);color:var(--opc);border-color:transparent;font-weight:500;}
+.bm-acts{display:flex;gap:8px;flex-shrink:0;}
+.bm-nbtn{height:36px;padding:0 14px;border-radius:18px;border:none;background:var(--p);color:var(--op);font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.bm-fld-btn{height:36px;padding:0 12px;border-radius:18px;border:1px dashed var(--out);background:transparent;color:var(--osv);font-family:'Google Sans',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;}
+.bm-fld-btn:hover{background:var(--sv);color:var(--os);}
+.bm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;}
+.bm-card{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:16px;background:var(--s);border:1px solid var(--ov);text-decoration:none;transition:all .2s;position:relative;}
+.bm-card:hover{background:var(--sv);transform:translateY(-2px);box-shadow:0 3px 12px var(--sh);}
+.bm-fav{width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.bm-fav img{width:100%;height:100%;object-fit:contain;}
+.bm-fav.fb{font-size:16px;font-weight:700;color:#fff;}
+.bm-info{flex:1;overflow:hidden;}
+.bm-ttl{font-size:13px;font-weight:500;color:var(--os);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bm-url{font-size:11px;color:var(--osv);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.bm-del{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;border:none;background:var(--sv);color:var(--osv);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:12px;}
+.bm-card:hover .bm-del{display:flex;}
+.bm-del:hover{background:#B3261E;color:#fff;}
+.bm-empty{display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px 20px;color:var(--osv);text-align:center;grid-column:1/-1;}
+.bm-empty .bei{font-size:48px;opacity:.35;}
+.so{position:fixed;inset:0;background:var(--scrim);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.so.show{opacity:1;pointer-events:all;}
+.spp{position:fixed;right:0;top:0;bottom:0;width:320px;background:var(--s);z-index:101;padding:24px;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;gap:18px;}
+.spp.show{transform:translateX(0);}
+.shdr{display:flex;align-items:center;justify-content:space-between;}
+.sttl{font-size:18px;font-weight:500;}
+.sgrp label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--osv);display:block;margin-bottom:8px;}
+.sin{width:100%;height:40px;border-radius:12px;border:1px solid var(--ov);background:var(--sv);padding:0 12px;font-family:'Google Sans',sans-serif;font-size:14px;color:var(--os);outline:none;}
+.sin:focus{border-color:var(--p);}
+.sws{display:flex;gap:8px;flex-wrap:wrap;}
+.sw{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;}
+.sw:hover{transform:scale(1.15);}
+.sw.on{border-color:var(--os);}
+.trow2{display:flex;align-items:center;justify-content:space-between;padding:4px 0;}
+.tog{width:48px;height:28px;border-radius:14px;background:var(--sv);border:2px solid var(--out);position:relative;cursor:pointer;transition:background .2s,border-color .2s;}
+.tog.on{background:var(--p);border-color:var(--p);}
+.tog::after{content:'';width:20px;height:20px;border-radius:50%;background:var(--out);position:absolute;top:2px;left:2px;transition:transform .2s,background .2s;}
+.tog.on::after{transform:translateX(20px);background:var(--op);}
+.sact{width:100%;height:40px;border-radius:12px;border:1px solid var(--ov);background:var(--sc);color:var(--os);font-family:'Google Sans',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;transition:filter .2s;}
+.sact:hover{filter:brightness(.95);}
+.fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:16px;border:none;background:var(--pc);color:var(--opc);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px var(--sh);transition:all .2s;z-index:10;font-size:24px;}
+.fab:hover{transform:scale(1.05);box-shadow:0 6px 22px var(--sh);}
+.mbg{position:fixed;inset:0;background:var(--scrim);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mbg.show{opacity:1;pointer-events:all;}
+.mdl{background:var(--s);border-radius:28px;padding:28px;width:100%;max-width:380px;box-shadow:0 8px 32px var(--sh);transform:scale(.92);transition:transform .25s cubic-bezier(.4,0,.2,1);}
+.mbg.show .mdl{transform:scale(1);}
+.mttl{font-size:18px;font-weight:500;margin-bottom:20px;}
+.mfld{margin-bottom:14px;}
+.mfld label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--osv);display:block;margin-bottom:6px;}
+.min{width:100%;height:44px;border-radius:12px;border:1px solid var(--ov);background:var(--sv);padding:0 14px;font-family:'Google Sans',sans-serif;font-size:14px;color:var(--os);outline:none;}
+.min:focus{border-color:var(--p);}
+.msel{width:100%;height:44px;border-radius:12px;border:1px solid var(--ov);background:var(--sv);padding:0 14px;font-family:'Google Sans',sans-serif;font-size:14px;color:var(--os);outline:none;cursor:pointer;}
+.macts{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+.mcan{padding:10px 20px;border-radius:12px;border:none;background:var(--sv);color:var(--os);font-family:'Google Sans',sans-serif;font-size:14px;cursor:pointer;}
+.msav{padding:10px 20px;border-radius:12px;border:none;background:var(--p);color:var(--op);font-family:'Google Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;}
+.snk{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--os);color:var(--s);padding:12px 22px;border-radius:12px;font-size:14px;z-index:300;transition:transform .3s;white-space:nowrap;}
+.snk.show{transform:translateX(-50%) translateY(0);}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.app-item,.bm-card{animation:fu .3s ease both;}
+@media(max-width:600px){.page{padding:14px 12px 70px;gap:14px;}.spp{width:100%;}.agrid{grid-template-columns:repeat(auto-fill,minmax(65px,1fr));}}
+</style>
+</head>
+<body>
+<div id="wbg"></div>
+<div class="page">
+<div class="topbar">
+  <div><div id="greet-n">Good Morning! ☀️</div><div id="greet-s">Welcome back</div></div>
+  <div class="tbr">
+    <button class="ibtn" id="btn-clk" title="Toggle clock">🕐</button>
+    <button class="ibtn" id="btn-drk" title="Dark mode">🌙</button>
+    <button class="ibtn" id="btn-set" title="Settings">⚙️</button>
+  </div>
+</div>
+<div class="clk-sec">
+  <div id="clock">00:00</div>
+  <div id="aclk"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="95" fill="var(--pc)" stroke="var(--ov)" stroke-width="2"/><g id="hmarks"></g><line id="hh" x1="100" y1="100" x2="100" y2="58" stroke="var(--os)" stroke-width="5" stroke-linecap="round"/><line id="mh" x1="100" y1="100" x2="100" y2="38" stroke="var(--os)" stroke-width="3" stroke-linecap="round"/><line id="sh2" x1="100" y1="112" x2="100" y2="32" stroke="var(--p)" stroke-width="1.5" stroke-linecap="round"/><circle cx="100" cy="100" r="5" fill="var(--p)"/></svg></div>
+  <div id="date-d"></div>
+</div>
+<div class="srch-wrap">
+  <span class="si">🔍</span>
+  <input type="text" class="sb" id="srch" placeholder="Search the web…" autocomplete="off">
+  <div class="ew">
+    <button class="ebtn" id="ebtn">Google</button>
+    <div class="edd" id="edd">
+      <div class="eopt on" data-name="Google" data-url="https://google.com/search?q=">🔵 Google</div>
+      <div class="eopt" data-name="DuckDuckGo" data-url="https://duckduckgo.com/?q=">🦆 DuckDuckGo</div>
+      <div class="eopt" data-name="Bing" data-url="https://bing.com/search?q=">🔷 Bing</div>
+      <div class="eopt" data-name="Brave" data-url="https://search.brave.com/search?q=">🦁 Brave</div>
+      <div class="eopt" data-name="YouTube" data-url="https://youtube.com/results?search_query=">▶️ YouTube</div>
+      <div class="eopt" data-name="Perplexity" data-url="https://perplexity.ai/search?q=">⚡ Perplexity</div>
+    </div>
+  </div>
+</div>
+<div class="stab">
+  <button class="tbtn on" data-tab="google">🔷 Google Apps</button>
+  <button class="tbtn" data-tab="ai">🤖 AI Tools</button>
+  <button class="tbtn" data-tab="bookmarks">🔖 Bookmarks</button>
+  <button class="tbtn" data-tab="dash">📊 Dashboard</button>
+</div>
+<div class="tpnl show" id="tab-google">
+  <div class="shd">Communication</div><div class="agrid" id="g-comm"></div>
+  <div class="shd">Productivity & Office</div><div class="agrid" id="g-prod"></div>
+  <div class="shd">Media & Entertainment</div><div class="agrid" id="g-media"></div>
+  <div class="shd">Cloud & Developer</div><div class="agrid" id="g-cloud"></div>
+  <div class="shd">Maps, Search & More</div><div class="agrid" id="g-more"></div>
+</div>
+<div class="tpnl" id="tab-ai">
+  <div class="shd">Conversational AI</div><div class="agrid" id="ai-chat"></div>
+  <div class="shd">Image & Art AI</div><div class="agrid" id="ai-img"></div>
+  <div class="shd">Video & Audio AI</div><div class="agrid" id="ai-vid"></div>
+  <div class="shd">Writing AI</div><div class="agrid" id="ai-write"></div>
+  <div class="shd">Code & Dev AI</div><div class="agrid" id="ai-code"></div>
+  <div class="shd">Search & Research AI</div><div class="agrid" id="ai-srch"></div>
+</div>
+<div class="tpnl" id="tab-bookmarks">
+  <div class="bm-bar">
+    <div class="bm-chips" id="bm-chips"></div>
+    <div class="bm-acts">
+      <button class="bm-fld-btn" id="bm-new-fld">📁 New Folder</button>
+      <button class="bm-nbtn" id="bm-add">🔖 Add Bookmark</button>
+    </div>
+  </div>
+  <div class="bm-grid" id="bm-grid"></div>
+</div>
+<div class="tpnl" id="tab-dash">
+  <div class="cgrid">
+    <div class="card wx-card"><div class="cttl">Weather</div><div id="wx-cnt"><div class="wx-setup"><div style="font-size:36px">🌤️</div><p style="font-size:13px">Set your city in settings</p></div></div></div>
+    <div class="card"><div class="cttl">To-Do List</div><div class="trow"><input type="text" class="tin" id="todo-in" placeholder="Add a task…"><button class="abtn" id="todo-add">+</button></div><ul class="tlist" id="todo-list"></ul></div>
+  </div>
+</div>
+</div>
+<button class="fab" id="fab">🎨</button>
+<div class="so" id="so"></div>
+<div class="spp" id="spp">
+  <div class="shdr"><div class="sttl">Customize</div><button class="ibtn" id="s-close">✕</button></div>
+  <div class="sgrp"><label>Your Name</label><input type="text" class="sin" id="s-name" placeholder="Your name"></div>
+  <div class="sgrp"><label>Color Theme</label><div class="sws">
+    <div class="sw on" style="background:#6750A4" data-i="0"></div>
+    <div class="sw" style="background:#006874" data-i="1"></div>
+    <div class="sw" style="background:#B3261E" data-i="2"></div>
+    <div class="sw" style="background:#386A1F" data-i="3"></div>
+    <div class="sw" style="background:#7B5800" data-i="4"></div>
+    <div class="sw" style="background:#005CBB" data-i="5"></div>
+  </div></div>
+  <div class="sgrp"><label>Appearance</label>
+    <div class="trow2"><span style="font-size:14px">Dark Mode</span><div class="tog" id="tog-d"></div></div>
+    <div class="trow2" style="margin-top:8px"><span style="font-size:14px">Analog Clock</span><div class="tog" id="tog-a"></div></div>
+  </div>
+  <div class="sgrp"><label>Weather City</label><input type="text" class="sin" id="s-city" placeholder="e.g. Dhaka, BD"><button class="sact" id="s-city-sv">✓ Save City</button></div>
+  <div class="sgrp"><label>Wallpaper</label>
+    <button class="sact" id="s-wp-up">↑ Upload Image</button>
+    <input type="file" id="wp-file" accept="image/*" style="display:none">
+    <button class="sact" id="s-wp-cl">🗑 Remove Wallpaper</button>
+  </div>
+</div>
+<div class="mbg" id="bm-modal">
+  <div class="mdl">
+    <div class="mttl" id="bm-mttl">Add Bookmark</div>
+    <div class="mfld"><label>Title</label><input type="text" class="min" id="bm-m-t" placeholder="My Website"></div>
+    <div class="mfld"><label>URL</label><input type="text" class="min" id="bm-m-u" placeholder="https://example.com"></div>
+    <div class="mfld"><label>Folder</label><select class="msel" id="bm-m-f"></select></div>
+    <div class="macts"><button class="mcan" id="bm-mcan">Cancel</button><button class="msav" id="bm-msav">Save</button></div>
+  </div>
+</div>
+<div class="mbg" id="fld-modal">
+  <div class="mdl">
+    <div class="mttl">New Folder</div>
+    <div class="mfld"><label>Folder Name</label><input type="text" class="min" id="fld-mn" placeholder="e.g. Work, News…"></div>
+    <div class="macts"><button class="mcan" id="fld-mcan">Cancel</button><button class="msav" id="fld-msav">Create</button></div>
+  </div>
+</div>
+<div class="snk" id="snk"></div>
+<script src="newtab.js"></script>
+</body>
+</html>
