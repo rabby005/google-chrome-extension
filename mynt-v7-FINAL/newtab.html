@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>New Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;700&family=Google+Sans+Display:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root{
+  --p:#6750A4;--op:#fff;--pc:#EADDFF;--opc:#21005D;
+  --sc:#E8DEF8;--sv:#E7E0EC;--os:#1C1B1F;--osv:#49454F;
+  --s:#FFFBFE;--bg:#FFFBFE;--ov:#CAC4D0;--out:#79747E;
+  --sh:rgba(0,0,0,.08);--scrim:rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Google Sans',system-ui,sans-serif;background:var(--bg);color:var(--os);min-height:100vh;transition:background .3s,color .3s;}
+#wbg{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center;}
+body.wp #wbg{filter:brightness(.6);}
+
+/* ── WALLPAPER OVERRIDES ── */
+body.wp .main-col .card,
+body.wp .bm-card{background:rgba(10,8,18,.6)!important;backdrop-filter:blur(20px)!important;border-color:rgba(255,255,255,.1)!important;}
+body.wp .sb{background:rgba(255,255,255,.12)!important;color:#fff!important;border-color:rgba(255,255,255,.25)!important;}
+body.wp .sb::placeholder{color:rgba(255,255,255,.45)!important;}
+body.wp #clock,body.wp #date-d,body.wp .greet-n,body.wp .greet-s{color:#fff!important;text-shadow:0 2px 12px rgba(0,0,0,.7);}
+body.wp .stab{border-bottom-color:rgba(255,255,255,.15)!important;}
+body.wp .tbtn{color:rgba(255,255,255,.55)!important;}
+body.wp .tbtn.on{color:#D0BCFF!important;border-bottom-color:#D0BCFF!important;}
+body.wp .shd{color:rgba(255,255,255,.35)!important;}
+body.wp .app-lbl{color:rgba(255,255,255,.8)!important;}
+body.wp .app-item:hover{background:rgba(255,255,255,.12)!important;}
+body.wp .bm-chip{border-color:rgba(255,255,255,.2)!important;color:rgba(255,255,255,.65)!important;}
+body.wp .bm-chip.on{background:rgba(208,188,255,.2)!important;color:#D0BCFF!important;}
+body.wp .pw-box{background:rgba(10,8,18,.65)!important;backdrop-filter:blur(22px)!important;border-color:rgba(255,255,255,.1)!important;}
+body.wp .pw-title,body.wp .pw-bn{color:#fff!important;}
+body.wp .pw-time{color:rgba(255,255,255,.6)!important;}
+body.wp .pw-city-tag{color:rgba(255,255,255,.35)!important;border-top-color:rgba(255,255,255,.08)!important;}
+body.wp .ibtn{color:rgba(255,255,255,.8)!important;}
+body.wp .ibtn:hover{background:rgba(255,255,255,.15)!important;}
+
+/* ── ROOT LAYOUT ── */
+.root{max-width:1400px;margin:0 auto;padding:24px 24px 80px;display:grid;grid-template-columns:1fr 272px;grid-template-rows:auto;gap:0 22px;min-height:100vh;}
+
+/* ── LEFT COLUMN ── */
+.main-col{display:flex;flex-direction:column;gap:16px;min-width:0;}
+
+/* ── RIGHT COLUMN (prayer - always visible) ── */
+.prayer-col{grid-row:1/99;position:sticky;top:24px;height:calc(100vh - 48px);display:flex;flex-direction:column;}
+.pw-box{background:var(--s);border:1px solid var(--ov);border-radius:24px;box-shadow:0 2px 12px var(--sh);flex:1;display:flex;flex-direction:column;overflow:hidden;padding:18px;}
+
+/* Prayer header */
+.pw-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.pw-title{font-size:13px;font-weight:600;color:var(--os);}
+.pw-fmt{height:24px;padding:0 10px;border-radius:12px;border:1px solid var(--ov);background:var(--sv);font-family:inherit;font-size:11px;font-weight:600;color:var(--osv);cursor:pointer;transition:all .2s;letter-spacing:.3px;}
+.pw-fmt:hover{background:var(--p);color:#fff;border-color:transparent;}
+
+/* Next prayer box */
+.pw-next-box{background:var(--p);border-radius:16px;padding:14px 16px;margin-bottom:12px;}
+.pw-nl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.65);margin-bottom:4px;}
+.pw-nn{font-size:16px;font-weight:600;color:#fff;}
+.pw-cd{font-size:32px;font-weight:300;color:#fff;letter-spacing:-1.5px;line-height:1;margin-top:3px;font-variant-numeric:tabular-nums;}
+
+/* Prayer rows */
+.pw-list{display:flex;flex-direction:column;gap:1px;flex:1;overflow-y:auto;}
+.pw-list::-webkit-scrollbar{display:none;}
+.pw-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:10px;transition:background .15s;}
+.pw-row:hover{background:var(--sv);}
+.pw-row.pw-active{background:var(--pc);}
+.pw-row.pw-active .pw-bn{color:var(--opc)!important;font-weight:600;}
+.pw-row.pw-active .pw-time{color:var(--opc)!important;}
+.pw-ico{font-size:14px;width:20px;text-align:center;flex-shrink:0;}
+.pw-bn{flex:1;font-size:12.5px;font-weight:500;color:var(--os);}
+.pw-time{font-size:12px;font-weight:600;color:var(--osv);font-variant-numeric:tabular-nums;letter-spacing:.2px;}
+.pw-city-tag{font-size:10px;color:var(--osv);text-align:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--ov);flex-shrink:0;}
+.pw-loading{font-size:13px;color:var(--osv);text-align:center;padding:30px 10px;}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;justify-content:space-between;align-items:center;}
+.greet-n{font-family:'Google Sans Display',sans-serif;font-size:clamp(18px,2.5vw,26px);font-weight:400;}
+.greet-s{font-size:13px;color:var(--osv);margin-top:2px;}
+.tbr{display:flex;gap:4px;}
+.ibtn{width:38px;height:38px;border-radius:50%;border:none;background:transparent;color:var(--osv);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:background .2s;}
+.ibtn:hover{background:var(--sv);}
+
+/* ── CLOCK ── */
+.clk-sec{text-align:center;}
+#clock{font-family:'Google Sans Display',sans-serif;font-size:clamp(48px,8vw,80px);font-weight:300;letter-spacing:-2px;line-height:1;}
+#date-d{font-size:14px;color:var(--osv);margin-top:6px;}
+#aclk{display:none;margin:0 auto;width:130px;height:130px;}
+#aclk svg{width:100%;height:100%;}
+
+/* ── SEARCH ── */
+.srch-wrap{position:relative;max-width:600px;margin:0 auto;width:100%;}
+.sb{width:100%;height:52px;border-radius:26px;border:1.5px solid var(--ov);background:var(--sv);padding:0 110px 0 48px;font-family:'Google Sans',sans-serif;font-size:15px;color:var(--os);outline:none;transition:all .2s;box-shadow:0 1px 6px var(--sh);}
+.sb:focus{border-color:var(--p);background:var(--s);box-shadow:0 3px 14px var(--sh);}
+.si{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--osv);font-size:18px;pointer-events:none;}
+.ew{position:absolute;right:7px;top:50%;transform:translateY(-50%);}
+.ebtn{height:36px;padding:0 13px;border-radius:18px;border:none;background:var(--pc);color:var(--opc);font-family:'Google Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;}
+.edd{position:absolute;top:calc(100% + 8px);right:0;background:var(--s);border:1px solid var(--ov);border-radius:16px;overflow:hidden;box-shadow:0 4px 20px var(--sh);z-index:99;display:none;min-width:160px;}
+.edd.show{display:block;}
+.eopt{padding:10px 15px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:8px;transition:background .15s;}
+.eopt:hover{background:var(--sv);}
+.eopt.on{color:var(--p);font-weight:500;}
+
+/* ── TABS ── */
+.stab{display:flex;gap:2px;border-bottom:1.5px solid var(--ov);overflow-x:auto;}
+.stab::-webkit-scrollbar{display:none;}
+.tbtn{padding:9px 14px;border:none;border-bottom:3px solid transparent;margin-bottom:-1.5px;background:transparent;font-family:'Google Sans',sans-serif;font-size:13.5px;font-weight:500;color:var(--osv);cursor:pointer;border-radius:8px 8px 0 0;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.tbtn:hover{background:var(--sv);color:var(--os);}
+.tbtn.on{color:var(--p);border-bottom-color:var(--p);}
+.tpnl{display:none;}
+.tpnl.show{display:block;}
+
+/* ── SECTION HEADING ── */
+.shd{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1.3px;color:var(--osv);margin:16px 0 6px;}
+
+/* ── APP GRID ── */
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:1px;}
+.app-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 4px;border-radius:14px;text-decoration:none;cursor:pointer;transition:background .2s,transform .15s;}
+.app-item:hover{background:var(--sv);transform:translateY(-2px);}
+.app-ico{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.app-ico img{width:88%;height:88%;object-fit:contain;}
+.app-lbl{font-size:10.5px;color:var(--osv);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72px;}
+
+/* ── CARDS ── */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:6px;}
+.card{background:var(--s);border-radius:22px;padding:18px;border:1px solid var(--ov);box-shadow:0 1px 4px var(--sh);}
+.cttl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--osv);margin-bottom:12px;}
+.wx-card{background:linear-gradient(135deg,var(--pc),#FFD8E4)!important;border-color:transparent!important;}
+.wx-main{display:flex;align-items:center;gap:14px;}
+.wx-ico{font-size:44px;line-height:1;}
+.wx-temp{font-size:36px;font-weight:300;color:var(--opc);}
+.wx-desc{font-size:12px;color:var(--opc);margin-top:3px;text-transform:capitalize;}
+.wx-city{font-size:10px;color:var(--opc);opacity:.75;margin-top:2px;}
+.wx-dets{display:flex;gap:12px;margin-top:10px;}
+.wx-det{font-size:11px;color:var(--opc);}
+.wx-setup{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px;text-align:center;color:var(--osv);}
+.trow{display:flex;gap:8px;margin-bottom:10px;}
+.tin{flex:1;height:38px;border-radius:10px;border:1px solid var(--ov);background:var(--sv);padding:0 11px;font-family:'Google Sans',sans-serif;font-size:13px;color:var(--os);outline:none;}
+.tin:focus{border-color:var(--p);}
+.abtn{width:38px;height:38px;border-radius:50%;border:none;background:var(--p);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;}
+.tlist{list-style:none;display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto;}
+.tli{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:10px;background:var(--sv);}
+.tcb{width:18px;height:18px;border-radius:50%;border:2px solid var(--out);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s;}
+.tcb.done{background:var(--p);border-color:var(--p);color:#fff;}
+.ttxt{flex:1;font-size:13px;}
+.ttxt.done{text-decoration:line-through;color:var(--osv);}
+.tdel{background:none;border:none;cursor:pointer;color:var(--osv);opacity:0;font-size:14px;}
+.tli:hover .tdel{opacity:1;}
+
+/* ── BOOKMARKS ── */
+.bm-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;margin-top:6px;flex-wrap:wrap;}
+.bm-chips{display:flex;gap:5px;flex-wrap:wrap;flex:1;}
+.bm-chip{padding:5px 12px;border-radius:18px;border:1px solid var(--ov);background:transparent;font-family:'Google Sans',sans-serif;font-size:12.5px;color:var(--osv);cursor:pointer;transition:all .2s;}
+.bm-chip:hover{background:var(--sv);}
+.bm-chip.on{background:var(--pc);color:var(--opc);border-color:transparent;font-weight:500;}
+.bm-acts{display:flex;gap:7px;flex-shrink:0;}
+.bm-nbtn{height:34px;padding:0 13px;border-radius:17px;border:none;background:var(--p);color:#fff;font-family:'Google Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;}
+.bm-fld-btn{height:34px;padding:0 11px;border-radius:17px;border:1px dashed var(--out);background:transparent;color:var(--osv);font-family:'Google Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;}
+.bm-fld-btn:hover{background:var(--sv);color:var(--os);}
+.bm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px;}
+.bm-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--s);border:1px solid var(--ov);text-decoration:none;transition:all .2s;position:relative;}
+.bm-card:hover{background:var(--sv);transform:translateY(-2px);box-shadow:0 3px 12px var(--sh);}
+.bm-fav{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.bm-fav img{width:100%;height:100%;object-fit:contain;}
+.bm-info{flex:1;overflow:hidden;}
+.bm-ttl{font-size:12.5px;font-weight:500;color:var(--os);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bm-url{font-size:10.5px;color:var(--osv);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.bm-del{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;border:none;background:var(--sv);color:var(--osv);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:11px;}
+.bm-card:hover .bm-del{display:flex;}
+.bm-del:hover{background:#B3261E;color:#fff;}
+.bm-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:40px 20px;color:var(--osv);text-align:center;grid-column:1/-1;font-size:13px;}
+
+/* ── SETTINGS ── */
+.so{position:fixed;inset:0;background:var(--scrim);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+.so.show{opacity:1;pointer-events:all;}
+.spp{position:fixed;right:0;top:0;bottom:0;width:310px;background:var(--s);z-index:101;padding:22px;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+.spp.show{transform:translateX(0);}
+.shdr{display:flex;align-items:center;justify-content:space-between;}
+.sttl{font-size:17px;font-weight:500;}
+.sgrp label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--osv);display:block;margin-bottom:7px;}
+.sin{width:100%;height:38px;border-radius:10px;border:1px solid var(--ov);background:var(--sv);padding:0 11px;font-family:'Google Sans',sans-serif;font-size:13px;color:var(--os);outline:none;}
+.sin:focus{border-color:var(--p);}
+.sws{display:flex;gap:8px;flex-wrap:wrap;}
+.sw{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;}
+.sw:hover{transform:scale(1.12);}
+.sw.on{border-color:var(--os);}
+.trow2{display:flex;align-items:center;justify-content:space-between;padding:3px 0;}
+.tog{width:44px;height:26px;border-radius:13px;background:var(--sv);border:2px solid var(--out);position:relative;cursor:pointer;transition:background .2s,border-color .2s;}
+.tog.on{background:var(--p);border-color:var(--p);}
+.tog::after{content:'';width:18px;height:18px;border-radius:50%;background:var(--out);position:absolute;top:2px;left:2px;transition:transform .2s,background .2s;}
+.tog.on::after{transform:translateX(18px);background:#fff;}
+.sact{width:100%;height:38px;border-radius:10px;border:1px solid var(--ov);background:var(--sc);color:var(--os);font-family:'Google Sans',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:5px;}
+.sact:hover{filter:brightness(.95);}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:22px;right:22px;width:52px;height:52px;border-radius:15px;border:none;background:var(--pc);color:var(--opc);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px var(--sh);font-size:22px;z-index:10;}
+.fab:hover{transform:scale(1.06);}
+
+/* ── MODAL ── */
+.mbg{position:fixed;inset:0;background:var(--scrim);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mbg.show{opacity:1;pointer-events:all;}
+.mdl{background:var(--s);border-radius:26px;padding:26px;width:100%;max-width:370px;box-shadow:0 8px 32px var(--sh);transform:scale(.93);transition:transform .25s;}
+.mbg.show .mdl{transform:scale(1);}
+.mttl{font-size:17px;font-weight:500;margin-bottom:18px;}
+.mfld{margin-bottom:12px;}
+.mfld label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--osv);display:block;margin-bottom:5px;}
+.min{width:100%;height:42px;border-radius:10px;border:1px solid var(--ov);background:var(--sv);padding:0 13px;font-family:'Google Sans',sans-serif;font-size:13px;color:var(--os);outline:none;}
+.min:focus{border-color:var(--p);}
+.msel{width:100%;height:42px;border-radius:10px;border:1px solid var(--ov);background:var(--sv);padding:0 13px;font-family:'Google Sans',sans-serif;font-size:13px;color:var(--os);outline:none;cursor:pointer;}
+.macts{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;}
+.mcan{padding:9px 18px;border-radius:10px;border:none;background:var(--sv);color:var(--os);font-family:'Google Sans',sans-serif;font-size:13px;cursor:pointer;}
+.msav{padding:9px 18px;border-radius:10px;border:none;background:var(--p);color:#fff;font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
+
+/* ── SNACKBAR ── */
+.snk{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--os);color:var(--s);padding:11px 20px;border-radius:10px;font-size:13px;z-index:300;transition:transform .3s;white-space:nowrap;}
+.snk.show{transform:translateX(-50%) translateY(0);}
+
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.app-item,.bm-card{animation:fu .25s ease both;}
+
+@media(max-width:900px){
+  .root{grid-template-columns:1fr;padding:14px 14px 70px;}
+  .prayer-col{grid-row:auto;position:static;height:auto;}
+  .pw-box{max-height:none;}
+  .spp{width:100%;}
+  .agrid{grid-template-columns:repeat(auto-fill,minmax(62px,1fr));}
+}
+</style>
+</head>
+<body>
+<div id="wbg"></div>
+
+<div class="root">
+  <!-- ══ LEFT: MAIN CONTENT ══ -->
+  <div class="main-col">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <div class="greet-n" id="greet-n">Good Morning! ☀️</div>
+        <div class="greet-s" id="greet-s">Welcome back</div>
+      </div>
+      <div class="tbr">
+        <button class="ibtn" id="btn-clk" title="Toggle clock">🕐</button>
+        <button class="ibtn" id="btn-drk" title="Dark mode">🌙</button>
+        <button class="ibtn" id="btn-set" title="Settings">⚙️</button>
+      </div>
+    </div>
+
+    <!-- Clock -->
+    <div class="clk-sec">
+      <div id="clock">00:00</div>
+      <div id="aclk">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="95" fill="var(--pc)" stroke="var(--ov)" stroke-width="2"/>
+          <g id="hmarks"></g>
+          <line id="hh" x1="100" y1="100" x2="100" y2="58" stroke="var(--os)" stroke-width="5" stroke-linecap="round"/>
+          <line id="mh" x1="100" y1="100" x2="100" y2="38" stroke="var(--os)" stroke-width="3" stroke-linecap="round"/>
+          <line id="sh2" x1="100" y1="112" x2="100" y2="32" stroke="var(--p)" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="100" cy="100" r="5" fill="var(--p)"/>
+        </svg>
+      </div>
+      <div id="date-d"></div>
+    </div>
+
+    <!-- Search -->
+    <div class="srch-wrap">
+      <span class="si">🔍</span>
+      <input type="text" class="sb" id="srch" placeholder="Search the web…" autocomplete="off">
+      <div class="ew">
+        <button class="ebtn" id="ebtn">Google</button>
+        <div class="edd" id="edd">
+          <div class="eopt on" data-name="Google" data-url="https://google.com/search?q=">🔵 Google</div>
+          <div class="eopt" data-name="DuckDuckGo" data-url="https://duckduckgo.com/?q=">🦆 DuckDuckGo</div>
+          <div class="eopt" data-name="Bing" data-url="https://bing.com/search?q=">🔷 Bing</div>
+          <div class="eopt" data-name="Brave" data-url="https://search.brave.com/search?q=">🦁 Brave</div>
+          <div class="eopt" data-name="YouTube" data-url="https://youtube.com/results?search_query=">▶️ YouTube</div>
+          <div class="eopt" data-name="Perplexity" data-url="https://perplexity.ai/search?q=">⚡ Perplexity</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="stab">
+      <button class="tbtn on" data-tab="google">🔷 Google Apps</button>
+      <button class="tbtn" data-tab="ai">🤖 AI Tools</button>
+      <button class="tbtn" data-tab="bookmarks">🔖 Bookmarks</button>
+      <button class="tbtn" data-tab="dash">📊 Dashboard</button>
+    </div>
+
+    <!-- GOOGLE APPS -->
+    <div class="tpnl show" id="tab-google">
+      <div class="shd">Communication</div><div class="agrid" id="g-comm"></div>
+      <div class="shd">Productivity & Office</div><div class="agrid" id="g-prod"></div>
+      <div class="shd">Media & Entertainment</div><div class="agrid" id="g-media"></div>
+      <div class="shd">Cloud & Developer</div><div class="agrid" id="g-cloud"></div>
+      <div class="shd">Search & More</div><div class="agrid" id="g-more"></div>
+    </div>
+
+    <!-- AI TOOLS -->
+    <div class="tpnl" id="tab-ai">
+      <div class="shd">Conversational AI</div><div class="agrid" id="ai-chat"></div>
+      <div class="shd">Image & Art AI</div><div class="agrid" id="ai-img"></div>
+      <div class="shd">Video & Audio AI</div><div class="agrid" id="ai-vid"></div>
+      <div class="shd">Writing AI</div><div class="agrid" id="ai-write"></div>
+      <div class="shd">Code & Dev AI</div><div class="agrid" id="ai-code"></div>
+      <div class="shd">Search & Research AI</div><div class="agrid" id="ai-srch"></div>
+    </div>
+
+    <!-- BOOKMARKS -->
+    <div class="tpnl" id="tab-bookmarks">
+      <div class="bm-bar">
+        <div class="bm-chips" id="bm-chips"></div>
+        <div class="bm-acts">
+          <button class="bm-fld-btn" id="bm-new-fld">📁 New Folder</button>
+          <button class="bm-nbtn" id="bm-add">🔖 Add</button>
+        </div>
+      </div>
+      <div class="bm-grid" id="bm-grid"></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="tpnl" id="tab-dash">
+      <div class="cgrid">
+        <div class="card wx-card">
+          <div class="cttl">Weather</div>
+          <div id="wx-cnt"><div class="wx-setup"><div style="font-size:32px">🌤️</div><p style="font-size:12px">Set city in settings</p></div></div>
+        </div>
+        <div class="card">
+          <div class="cttl">To-Do List</div>
+          <div class="trow">
+            <input type="text" class="tin" id="todo-in" placeholder="Add a task…">
+            <button class="abtn" id="todo-add">+</button>
+          </div>
+          <ul class="tlist" id="todo-list"></ul>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-col -->
+
+  <!-- ══ RIGHT: PRAYER TIMES (always visible) ══ -->
+  <div class="prayer-col">
+    <div class="pw-box">
+      <div id="prayer-widget">
+        <div class="pw-loading">🕌 নামাজের সময় লোড হচ্ছে...</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /root -->
+
+<button class="fab" id="fab">🎨</button>
+
+<!-- Settings -->
+<div class="so" id="so"></div>
+<div class="spp" id="spp">
+  <div class="shdr"><div class="sttl">Customize</div><button class="ibtn" id="s-close">✕</button></div>
+  <div class="sgrp"><label>Your Name</label><input type="text" class="sin" id="s-name" placeholder="Your name"></div>
+  <div class="sgrp"><label>Color Theme</label>
+    <div class="sws">
+      <div class="sw on" style="background:#6750A4" data-i="0"></div>
+      <div class="sw" style="background:#006874" data-i="1"></div>
+      <div class="sw" style="background:#B3261E" data-i="2"></div>
+      <div class="sw" style="background:#386A1F" data-i="3"></div>
+      <div class="sw" style="background:#7B5800" data-i="4"></div>
+      <div class="sw" style="background:#005CBB" data-i="5"></div>
+    </div>
+  </div>
+  <div class="sgrp"><label>Appearance</label>
+    <div class="trow2"><span style="font-size:13px">Dark Mode</span><div class="tog" id="tog-d"></div></div>
+    <div class="trow2" style="margin-top:7px"><span style="font-size:13px">Analog Clock</span><div class="tog" id="tog-a"></div></div>
+    <div class="trow2" style="margin-top:7px"><span style="font-size:13px">12-hour Format</span><div class="tog" id="tog-12h"></div></div>
+  </div>
+  <div class="sgrp"><label>City (Weather & Prayer)</label>
+    <input type="text" class="sin" id="s-city" placeholder="e.g. Dhaka">
+    <button class="sact" id="s-city-sv">✓ Save City</button>
+  </div>
+  <div class="sgrp"><label>Wallpaper</label>
+    <button class="sact" id="s-wp-up">↑ Upload Image</button>
+    <input type="file" id="wp-file" accept="image/*" style="display:none">
+    <button class="sact" id="s-wp-cl">🗑 Remove Wallpaper</button>
+  </div>
+</div>
+
+<!-- Bookmark Modal -->
+<div class="mbg" id="bm-modal">
+  <div class="mdl">
+    <div class="mttl" id="bm-mttl">Add Bookmark</div>
+    <div class="mfld"><label>Title</label><input type="text" class="min" id="bm-m-t" placeholder="My Website"></div>
+    <div class="mfld"><label>URL</label><input type="text" class="min" id="bm-m-u" placeholder="https://example.com"></div>
+    <div class="mfld"><label>Folder</label><select class="msel" id="bm-m-f"></select></div>
+    <div class="macts"><button class="mcan" id="bm-mcan">Cancel</button><button class="msav" id="bm-msav">Save</button></div>
+  </div>
+</div>
+
+<!-- Folder Modal -->
+<div class="mbg" id="fld-modal">
+  <div class="mdl">
+    <div class="mttl">New Folder</div>
+    <div class="mfld"><label>Folder Name</label><input type="text" class="min" id="fld-mn" placeholder="e.g. Work, News…"></div>
+    <div class="macts"><button class="mcan" id="fld-mcan">Cancel</button><button class="msav" id="fld-msav">Create</button></div>
+  </div>
+</div>
+
+<div class="snk" id="snk"></div>
+<script src="newtab.js"></script>
+</body>
+</html>
