@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Faraby Theme",
+  "version": "10.0.0",
+  "description": "Faraby Theme - Beautiful New Tab",
+  "chrome_url_overrides": { "newtab": "newtab.html" },
+  "permissions": ["storage", "bookmarks"],
+  "host_permissions": ["<all_urls>"],
+  "icons": { "16": "icon16.png", "48": "icon48.png", "128": "icon128.png" }
+}
